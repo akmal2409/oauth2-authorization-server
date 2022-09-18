@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+  postgres:
+    image: postgres:latest
+    hostname: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=dev_db
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "dev_db"]
+      interval: 10s
+      timeout: 30s
+      retries: 5
+    networks:
+      - private
+    ports:
+      - "5432:5432"
+    volumes:
+      - oauth2-server-postgres-data:/var/lib/postgresql/data
+
+
+networks:
+  private:
+    driver: bridge
+
+volumes:
+  oauth2-server-postgres-data:
