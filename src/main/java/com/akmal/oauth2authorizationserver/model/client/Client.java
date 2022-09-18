@@ -23,8 +23,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Table(name = "OAuth_2_clients", schema = "public")
-public class OAuth2Client {
+@Table(name = "Clients", schema = "public")
+public class Client {
   @Id
   @Column(name = "client_id", columnDefinition = "bpchar(36)")
   private String clientId;
@@ -37,12 +37,12 @@ public class OAuth2Client {
 
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
-      name = "OAuth_2_client_grants",
+      name = "Client_grants",
       schema = "public",
       joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id")       ,
       inverseJoinColumns = @JoinColumn(name = "grant_type", referencedColumnName = "type")
   )
-  private List<OAuth2Grant> grants = new ArrayList<>();
+  private List<Grant> grants = new ArrayList<>();
 
   @ElementCollection
   @CollectionTable(name = "Client_sign_in_redirect_uris",
@@ -66,7 +66,7 @@ public class OAuth2Client {
   private boolean requireUserConsent;
 
 
-  public void addGrant(OAuth2Grant grant) {
+  public void addGrant(Grant grant) {
     this.grants.add(grant);
   }
 }

@@ -16,10 +16,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "OAuth_2_grants", schema = "public")
-public class OAuth2Grant {
+@Table(name = "Grants", schema = "public")
+public class Grant {
   @Id
   @Enumerated(EnumType.STRING)
   @Column(name = "type")
-  private OAuth2GrantType type;
+  private GrantType type;
 }
