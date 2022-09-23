@@ -27,7 +27,8 @@ public record ClientCreateAction(
         this.signOutRedirectUris,
         this.trustedOrigins,
         this.requireUserConsent,
-        this.allowWildcardsInRedirectUrls
+        this.allowWildcardsInRedirectUrls,
+        false
     );
   }
 }

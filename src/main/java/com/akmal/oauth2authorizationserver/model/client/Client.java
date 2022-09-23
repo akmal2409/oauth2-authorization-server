@@ -12,11 +12,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.With;
+import org.springframework.data.domain.Persistable;
 
 
 @Entity
@@ -26,9 +28,9 @@ import lombok.With;
 @Setter
 @With
 @Table(name = "Clients", schema = "public")
-public class Client {
+public class Client implements Persistable<String> {
   @Id
-  @Column(name = "client_id", columnDefinition = "bpchar(36)")
+  @Column(name = "client_id")
   private String clientId;
 
   @Column(name = "name")
@@ -37,28 +39,27 @@ public class Client {
   @Column(name = "client_secret")
   private String clientSecret;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "Client_grants",
-      schema = "public",
-      joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id")       ,
+      joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"),
       inverseJoinColumns = @JoinColumn(name = "grant_type", referencedColumnName = "type")
   )
   private List<Grant> grants = new ArrayList<>();
 
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "Client_sign_in_redirect_uris",
     joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"))
   @Column(name = "uri")
   private List<String> signInRedirectUris = new ArrayList<>();
 
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "Client_sign_out_redirect_uris",
       joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"))
   @Column(name = "uri")
   private List<String> signOutRedirectUris = new ArrayList<>();
 
-  @ElementCollection
+  @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "Client_trusted_origins_uris",
       joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"))
   @Column(name = "uri")
@@ -70,8 +71,22 @@ public class Client {
   @Column(name = "allow_wildcards_in_redirect_urls")
   private boolean allowWildcardsInRedirectUrls;
 
+  @Transient
+  private boolean newEntity;
+
 
   public void addGrant(Grant grant) {
     this.grants.add(grant);
+  }
+
+
+  @Override
+  public String getId() {
+    return this.clientId;
+  }
+
+  @Override
+  public boolean isNew() {
+    return this.newEntity;
   }
 }
