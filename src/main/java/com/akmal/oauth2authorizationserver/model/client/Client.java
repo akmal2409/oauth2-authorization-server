@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.With;
 
 
 @Entity
@@ -23,6 +24,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@With
 @Table(name = "Clients", schema = "public")
 public class Client {
   @Id
@@ -64,6 +66,9 @@ public class Client {
 
   @Column(name = "require_user_consent")
   private boolean requireUserConsent;
+
+  @Column(name = "allow_wildcards_in_redirect_urls")
+  private boolean allowWildcardsInRedirectUrls;
 
 
   public void addGrant(Grant grant) {
