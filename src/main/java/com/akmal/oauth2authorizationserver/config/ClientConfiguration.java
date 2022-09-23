@@ -16,8 +16,5 @@ public class ClientConfiguration {
     return new ShortenedUUIDGenerator();
   }
 
-  @Bean
-  Generator<String> secretGenerator() {
-    return null;
-  }
+
 }
