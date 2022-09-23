@@ -9,12 +9,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_schema: "public"
+    show-sql: true
   datasource:
     url: "jdbc:postgresql://${PG_HOST:localhost}:5432/auth_service_db"
     username: "${PG_USERNAME:auth-service}"
     password: "${PG_PASSWORD:auth-service}"
     driver-class-name: org.postgresql.Driver
 
-logging:
-  level:
-    org.hibernate.*: DEBUG
