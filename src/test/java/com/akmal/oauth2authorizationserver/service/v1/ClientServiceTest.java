@@ -3,6 +3,7 @@ package com.akmal.oauth2authorizationserver.service.v1;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,7 +14,12 @@ import com.akmal.oauth2authorizationserver.model.client.Client;
 import com.akmal.oauth2authorizationserver.model.client.Grant;
 import com.akmal.oauth2authorizationserver.model.client.GrantType;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
+import com.akmal.oauth2authorizationserver.repository.client.GrantRepository;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientCreateAction;
+import com.akmal.oauth2authorizationserver.service.v1.client.ClientService;
+import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
+import com.akmal.oauth2authorizationserver.validator.client.ClientProperties;
+import com.akmal.oauth2authorizationserver.validator.client.ClientValidator;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,11 +37,20 @@ class ClientServiceTest {
   @Mock
   ClientRepository clientRepository;
 
+  @Mock
+  ClientValidator clientValidator;
+
+  @Mock
+  GrantRepository grantRepository;
+
   @Captor
   ArgumentCaptor<Client> clientArgumentCaptor;
 
   @Spy
   Generator<String> idGenerator = new ShortenedUUIDGenerator();
+
+  @Spy
+  TransactionPropagator transactionPropagator = new TransactionPropagator();
 
   @InjectMocks
   ClientService clientService;
@@ -50,8 +65,10 @@ class ClientServiceTest {
     );
 
     when(this.clientRepository.save(any(Client.class))).thenReturn(new Client());
+    when(this.clientValidator.validate(any())).thenReturn(true);
     this.clientService.create(createAction);
     verify(this.clientRepository).save(this.clientArgumentCaptor.capture());
+    verify(this.clientValidator, times(1)).validate(any(ClientProperties.class));
 
     Client clientBeforeSave = clientArgumentCaptor.getValue();
 
@@ -83,48 +100,6 @@ class ClientServiceTest {
     assertThat(clientBeforeSave.getTrustedOrigins()).isEqualTo(createAction.trustedOrigins());
     assertThat(clientBeforeSave.getSignInRedirectUris()).isEqualTo(createAction.signInRedirectUris());
     assertThat(clientBeforeSave.getSignOutRedirectUris()).isEqualTo(createAction.signOutRedirectUris());
-  }
-
-  @Test
-  @DisplayName("Test should fail when invalid URL is passes to the sign in redirect")
-  void testShouldFailWhenInvalidSignInRedirectUrlsPassed() {
-    final ClientCreateAction createAction = new ClientCreateAction(
-        null, List.of(), List.of("http://localhost.com", "http:/aloha.net/", "ftp://dropbox.com"),
-        List.of(), List.of(), false,
-        false
-    );
-
-    assertThatThrownBy(() -> {
-      this.clientService.create(createAction);
-    }, "Expected client service to throw InvalidClientConfigurationException due to invalid URLs").isInstanceOf(InvalidClientConfigurationException.class);
-  }
-
-  @Test
-  @DisplayName("Test should fail when invalid URL is passes to the sign out redirect")
-  void testShouldFailWhenInvalidSignOutRedirectUrlsPassed() {
-    final ClientCreateAction createAction = new ClientCreateAction(
-        null, List.of(), List.of(),
-        List.of("http://localhost.com", "http:/aloha.net/", "ftp://dropbox.com"), List.of(), false,
-        false
-    );
-
-    assertThatThrownBy(() -> {
-      this.clientService.create(createAction);
-    }, "Expected client service to throw InvalidClientConfigurationException due to invalid URLs").isInstanceOf(InvalidClientConfigurationException.class);
-  }
-
-  @Test
-  @DisplayName("Test should fail when invalid URL is passes to the trusted origins")
-  void testShouldFailWhenInvalidTrustedOriginUrlsPassed() {
-    final ClientCreateAction createAction = new ClientCreateAction(
-        null, List.of(), List.of(),
-        List.of(), List.of("http://localhost.com", "http:/aloha.net/", "ftp://dropbox.com"), false,
-        false
-    );
-
-    assertThatThrownBy(() -> {
-      this.clientService.create(createAction);
-    }, "Expected client service to throw InvalidClientConfigurationException due to invalid URLs").isInstanceOf(InvalidClientConfigurationException.class);
   }
 }
 
