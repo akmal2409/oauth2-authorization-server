@@ -25,7 +25,7 @@ import org.hibernate.Hibernate;
 public class User {
 
   @Id
-  @Column(name = "sub", columnDefinition = "bpchar(36)")
+  @Column(name = "sub")
   private String sub;
   @Column(name = "name")
   @NotNull

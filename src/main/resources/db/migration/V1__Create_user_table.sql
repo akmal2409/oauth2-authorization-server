@@ -1,6 +1,6 @@
 
 CREATE TABLE Users (
-    sub CHAR(36) PRIMARY KEY DEFAULT uuid_generate_v1() ,
+    sub VARCHAR(36) PRIMARY KEY,
     name VARCHAR(90) NOT NULL,
     username VARCHAR(40) NOT NULL,
     first_name VARCHAR(30) NOT NULL,
