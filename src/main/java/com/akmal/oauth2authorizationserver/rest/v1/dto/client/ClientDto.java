@@ -11,7 +11,8 @@ public record ClientDto(
     List<String> signInRedirectUris,
     List<String> signOutRedirectUris,
     List<String> trustedOrigins,
-    boolean requireUserConsent
+    boolean requireUserConsent,
+    boolean allowWildcardsInRedirectUrls
 ) {
 
   public static ClientDto from(Client client) {
@@ -25,7 +26,8 @@ public record ClientDto(
         Optional.ofNullable(client.getSignInRedirectUris()).orElse(List.of()),
         Optional.ofNullable(client.getSignOutRedirectUris()).orElse(List.of()),
         Optional.ofNullable(client.getTrustedOrigins()).orElse(List.of()),
-        client.isRequireUserConsent()
+        client.isRequireUserConsent(),
+        client.isAllowWildcardsInRedirectUrls()
     );
   }
 }
