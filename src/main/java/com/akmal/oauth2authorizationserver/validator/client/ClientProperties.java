@@ -1,8 +1,8 @@
 package com.akmal.oauth2authorizationserver.validator.client;
 
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientCreateAction;
+import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientUpdateAction;
 import java.util.Collection;
-import java.util.List;
 
 public record ClientProperties(
     String name,
@@ -23,6 +23,18 @@ public record ClientProperties(
         createAction.signOutRedirectUris(),
         createAction.trustedOrigins(),
         createAction.allowWildcardsInRedirectUrls()
+    );
+  }
+
+  public static ClientProperties from(ClientUpdateAction updateAction, Collection<String> systemWhitelistedGrants) {
+    return new ClientProperties(
+        updateAction.name(),
+        updateAction.grants(),
+        systemWhitelistedGrants,
+        updateAction.signInRedirectUris(),
+        updateAction.signOutRedirectUris(),
+        updateAction.trustedOrigins(),
+        updateAction.allowWildcardsInRedirectUrls()
     );
   }
 }

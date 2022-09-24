@@ -10,12 +10,14 @@ import com.akmal.oauth2authorizationserver.repository.client.GrantRepository;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.ClientDto;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.SecretGenerationResponse;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientCreateAction;
+import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientUpdateAction;
 import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
 import com.akmal.oauth2authorizationserver.validator.Validator;
 import com.akmal.oauth2authorizationserver.validator.client.ClientProperties;
 import java.util.Collection;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,15 +40,6 @@ public class ClientService {
 
   @Transactional(readOnly = true)
   public List<ClientDto> findAllClients() {
-    List<Client> clients = this.clientRepository
-                               .findAll();
-
-    for (Client client: clients) {
-
-      for (Grant grant: client.getGrants()) {
-      }
-      System.out.println("CLIENT " + client.getGrants().size());
-    }
     return this.clientRepository
                .findAll()
                .stream()
@@ -66,7 +59,7 @@ public class ClientService {
    * @return {@link ClientDto} persisted instance.
    */
   @Transactional
-  public ClientDto create(ClientCreateAction createAction) {
+  public ClientDto create(@NotNull ClientCreateAction createAction) {
     Collection<String> availableGrants = grantRepository.findAll().stream().map(Grant::getType).map(
         GrantType::toString).toList();
 
@@ -84,13 +77,57 @@ public class ClientService {
   }
 
   /**
+   * Updates the existing client with the values passed in the {@link ClientUpdateAction} DTO instance.
+   * Firstly, it validates the fields set on the DTO instance, whether they conform to invariants.
+   * Thereafter, it validates the presence of the existing client, if not {@link DataNotFoundException}
+   * is thrown.
+   * Lastly, it updates the properties and saves the client instance.
+   *
+   * @param clientId client id
+   * @param clientUpdateAction {@link ClientUpdateAction} instance
+   * @return {@link ClientDto}
+   */
+  @Transactional
+  public ClientDto update(@NotNull String clientId, @NotNull ClientUpdateAction clientUpdateAction) {
+    Collection<String> availableGrants = grantRepository.findAll().stream().map(Grant::getType).map(
+        GrantType::toString).toList();
+
+    this.transactionPropagator
+        .withinCurrent(() -> this.clientValidator
+                                 .validate(ClientProperties.from(clientUpdateAction, availableGrants)));
+    final var existingClient = this.clientRepository.findById(clientId)
+                                   .orElseThrow(() -> new DataNotFoundException("Client", clientId));
+
+
+
+
+    final var updatedClient = clientUpdateAction.toClient()
+                                  .withClientSecret(existingClient.getClientSecret())
+                                  .withClientId(existingClient.getClientId())
+                                  .withNewEntity(false);
+
+    final var savedClient = this.clientRepository.save(updatedClient);
+
+    return ClientDto.from(savedClient);
+  }
+
+  /**
+   * Deletes the client by id.
+   *
+   * @param clientId id of the {@link Client}
+   */
+  public void deleteById(String clientId) {
+    this.clientRepository.deleteById(clientId);
+  }
+
+  /**
    * Generates a clientSecret and returns to the user for one time look up to save it.
    * Afterwards, there is no way to access the client secret because its value is hashed and stored in the database.
    * @param clientId
    * @return
    */
   @Transactional
-  public SecretGenerationResponse generateSecret(String clientId) {
+  public SecretGenerationResponse generateSecret(@NotNull String clientId) {
     final var existingClient = this.clientRepository.findById(clientId)
                                    .orElseThrow(() -> new DataNotFoundException("client", clientId, null));
 
