@@ -1,6 +1,6 @@
 package com.akmal.oauth2authorizationserver.idgen;
 
-import com.akmal.oauth2authorizationserver.utils.ByteUtils;
+import com.akmal.oauth2authorizationserver.shared.utils.ByteUtils;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;

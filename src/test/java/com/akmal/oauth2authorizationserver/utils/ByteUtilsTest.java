@@ -2,6 +2,7 @@ package com.akmal.oauth2authorizationserver.utils;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.akmal.oauth2authorizationserver.shared.utils.ByteUtils;
 import org.junit.jupiter.api.Test;
 
 class ByteUtilsTest {

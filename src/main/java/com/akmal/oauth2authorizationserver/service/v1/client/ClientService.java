@@ -16,6 +16,7 @@ import com.akmal.oauth2authorizationserver.validator.Validator;
 import com.akmal.oauth2authorizationserver.validator.client.ClientProperties;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,6 +46,11 @@ public class ClientService {
                .stream()
                .map(ClientDto::from)
                .toList();
+  }
+
+  public Optional<ClientDto> findById(@NotNull String clientId) {
+    return this.clientRepository.findById(clientId)
+               .map(ClientDto::from);
   }
 
   /**

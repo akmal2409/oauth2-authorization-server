@@ -1,4 +1,4 @@
-package com.akmal.oauth2authorizationserver.utils;
+package com.akmal.oauth2authorizationserver.shared.utils;
 
 public class ByteUtils {
 
