@@ -9,6 +9,10 @@ public class DataNotFoundException extends RuntimeException {
   public DataNotFoundException(String resourceName, String id, Throwable ex) {
     super(String.format("Requested resource: %s with ID %s was not found", resourceName, id), ex);
   }
+
+  public DataNotFoundException(String resourceName, String id) {
+    super(String.format("Requested resource: %s with ID %s was not found", resourceName, id));
+  }
   public DataNotFoundException(String message) {
     super(message);
   }
