@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,11 @@ public class ClientController {
   @GetMapping
   public List<ClientDto> findAllClients() {
     return this.clientService.findAllClients();
+  }
+
+  @GetMapping("/{clientId}")
+  public ResponseEntity<ClientDto> findById(@PathVariable @Valid @NotBlank String clientId) {
+    return ResponseEntity.of(this.clientService.findById(clientId));
   }
 
   @ResponseStatus(HttpStatus.CREATED)
