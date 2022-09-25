@@ -2,7 +2,7 @@
 CREATE TABLE Users (
     sub VARCHAR(36) PRIMARY KEY,
     name VARCHAR(90) NOT NULL,
-    username VARCHAR(40) NOT NULL,
+    password TEXT,
     first_name VARCHAR(30) NOT NULL,
     middle_name VARCHAR(30),
     last_name VARCHAR(30) NOT NULL,

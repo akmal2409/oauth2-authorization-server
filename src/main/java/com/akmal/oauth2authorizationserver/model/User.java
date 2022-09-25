@@ -1,11 +1,18 @@
 package com.akmal.oauth2authorizationserver.model;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,7 +20,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.With;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Getter
@@ -21,6 +31,7 @@ import org.hibernate.Hibernate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@With
 @Table(name = "Users", schema = "public")
 public class User {
 
@@ -30,9 +41,10 @@ public class User {
   @Column(name = "name")
   @NotNull
   private String name;
-  @Column(name = "username")
-  @NotNull
-  private String username;
+
+  @Column(name = "password")
+  private String password;
+
   @Column(name = "first_name")
   @NotNull
   private String firstName;
@@ -46,12 +58,12 @@ public class User {
   @Column(name = "locale")
   private String locale;
   @Column(name = "updated_at")
-//  @UpdateTimestamp
+  @UpdateTimestamp
   private Instant updatedAt;
 
   @Column(name = "created_at")
   @NotNull
-//  @CreationTimestamp
+  @CreationTimestamp
   private Instant createdAt;
   @Column(name = "email")
   private String email;
@@ -59,6 +71,20 @@ public class User {
   private String phoneNumber;
   @Column(name = "email_verified")
   private boolean emailVerified;
+
+  @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinTable(
+      name = "User_roles",
+                schema = "public",
+                joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "sub"),
+                inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+  )
+  private List<Role> roles = new ArrayList<>();
+
+  public User addRole(Role role) {
+    this.roles.add(role);
+    return this;
+  }
 
   @Override
   public boolean equals(Object o) {
