@@ -1,0 +1,10 @@
+CREATE TABLE Roles (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(40)
+);
+
+INSERT INTO Roles VALUES
+(1, 'ROLE_ADMIN'),
+(2, 'ROLE_USER');
+
+CREATE UNIQUE INDEX role_name_idx ON Roles(name);
