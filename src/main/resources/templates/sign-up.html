@@ -1,0 +1,64 @@
+<!DOCTYPE html SYSTEM "http://thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Sign up</title>
+  <link rel="stylesheet" th:href="@{/styles/styles.css}"/>
+</head>
+<body>
+
+<div class="container signin-container">
+  <div class="card signup-card">
+    <div class="card-header">
+      <img class="card-image on-load-rotating-image" th:src="@{/assets/images/logo.png}"/>
+    </div>
+    <div class="card-body">
+
+
+      <form class="signin-form" th:action="@{/sign-up}" th:method="POST" th:object="${signUpModel}">
+
+        <div class="singin-input">
+          <p style="text-align: center">Sign Up</p>
+          <div class="form-group-vertical">
+            <label class="form-label">Email</label>
+            <input class="form-control" type="email" email id="email" required th:field="*{email}"/>
+          </div>
+
+          <div class="form-group-vertical">
+            <label class="form-label">Password</label>
+            <input class="form-control" type="password" id="password" required th:field="*{password}"/>
+          </div>
+
+          <div class="form-group-vertical">
+            <label class="form-label">First Name</label>
+            <input class="form-control" type="text" id="firstName" required th:field="*{firstName}"/>
+          </div>
+
+          <div class="form-group-vertical">
+            <label class="form-label">Middle Name(s)</label>
+            <input class="form-control" type="text" id="middleName" th:field="*{middleName}"/>
+          </div>
+
+          <div class="form-group-vertical">
+            <label class="form-label">Last Name</label>
+            <input class="form-control" type="text" id="lastName" required th:field="*{lastName}"/>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-lg btn-primary">
+            Sign Up
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
