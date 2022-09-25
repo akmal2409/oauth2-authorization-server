@@ -63,7 +63,28 @@ body {
   margin: 0 auto;
 }
 
+.on-load-rotating-image {
+  animation: scale-on-load 250ms linear;
+}
 
+@keyframes scale-on-load {
+  0% {
+    scale: 1;
+  }
+  50% {
+    scale: 1.15;
+  }
+
+  100% {
+    scale: 1;
+  }
+}
+
+/*sign up*/
+.signup-card {
+  height: 53rem;
+  width: 27rem;
+}
 /*sign in*/
 
 .signin-container {
