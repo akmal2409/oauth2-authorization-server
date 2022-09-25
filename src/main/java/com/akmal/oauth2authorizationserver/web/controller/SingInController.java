@@ -2,6 +2,7 @@ package com.akmal.oauth2authorizationserver.web.controller;
 
 import com.akmal.oauth2authorizationserver.web.model.SignInModel;
 import java.util.Optional;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +28,7 @@ public class SingInController {
 
   @PostMapping
   @ResponseBody
-  public String onSignIn(@ModelAttribute("signInModel") SignInModel signInModel) {
+  public String onSignIn(@Valid @ModelAttribute("signInModel") SignInModel signInModel) {
     return "hey";
   }
 }
