@@ -89,4 +89,9 @@ public class Client implements Persistable<String> {
   public boolean isNew() {
     return this.newEntity;
   }
+
+  public boolean isWebAuthFlowAllowed() {
+    return this.grants.stream()
+               .anyMatch(g -> GrantType.AUTHORIZATION_CODE_PKCE.equals(g.getType()));
+  }
 }
