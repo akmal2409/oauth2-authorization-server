@@ -102,11 +102,18 @@
       <artifactId>commons-validator</artifactId>
       <version>1.7</version>
     </dependency>
+
     <dependency>
       <groupId>org.jetbrains</groupId>
       <artifactId>annotations</artifactId>
       <version>17.0.0</version>
       <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vladmihalcea</groupId>
+      <artifactId>hibernate-types-52</artifactId>
+      <version>2.19.2</version>
     </dependency>
 
   </dependencies>
