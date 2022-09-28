@@ -5,6 +5,8 @@ CREATE TABLE Scopes (
     description VARCHAR(90) NOT NULL
 );
 
+CREATE INDEX scope_name_idx ON Scopes(name);
+
 INSERT INTO Scopes VALUES
 (1, 'openid', 'Allow application to verify your identity'),
 (2, 'profile', 'Allow application to access to basic information such as name, username, picture etc'),
