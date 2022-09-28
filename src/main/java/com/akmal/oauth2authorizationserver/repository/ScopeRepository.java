@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface ScopeRepository extends JpaRepository<Scope, Integer> {
 
-  @Query("SELECT s FROM Scopes s WHERE is_oidc_scope = true")
+  @Query("SELECT s FROM Scope s WHERE s.oidcScope = true")
   List<Scope> findAllOidcScopes();
 }
