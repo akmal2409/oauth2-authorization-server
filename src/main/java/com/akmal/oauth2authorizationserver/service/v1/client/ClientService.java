@@ -5,6 +5,7 @@ import com.akmal.oauth2authorizationserver.idgen.Generator;
 import com.akmal.oauth2authorizationserver.model.client.Client;
 import com.akmal.oauth2authorizationserver.model.client.Grant;
 import com.akmal.oauth2authorizationserver.model.client.GrantType;
+import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
 import com.akmal.oauth2authorizationserver.repository.client.GrantRepository;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.ClientDto;
@@ -32,6 +33,8 @@ public class ClientService {
   @Qualifier("idGenerator") private final Generator<String> idGenerator;
   @Qualifier("secretGenerator") private final Generator<String> secretGenerator;
   private final GrantRepository grantRepository;
+  private final ScopeRepository scopeRepository;
+
 
   private final TransactionPropagator transactionPropagator;
   private final PasswordEncoder passwordEncoder;
@@ -75,6 +78,7 @@ public class ClientService {
 
     final var clientId = this.idGenerator.next();
     final var client = createAction.toClient()
+                           .withAllowedScopes(this.scopeRepository.findAllOidcScopes())
                            .withClientId(clientId)
                            .withNewEntity(true);
 

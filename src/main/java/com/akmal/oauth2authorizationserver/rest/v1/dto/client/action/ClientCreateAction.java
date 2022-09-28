@@ -28,6 +28,7 @@ public record ClientCreateAction(
         this.trustedOrigins,
         this.requireUserConsent,
         this.allowWildcardsInRedirectUrls,
+        List.of(),
         false
     );
   }

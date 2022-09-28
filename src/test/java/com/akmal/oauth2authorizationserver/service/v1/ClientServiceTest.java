@@ -13,6 +13,8 @@ import com.akmal.oauth2authorizationserver.idgen.ShortenedUUIDGenerator;
 import com.akmal.oauth2authorizationserver.model.client.Client;
 import com.akmal.oauth2authorizationserver.model.client.Grant;
 import com.akmal.oauth2authorizationserver.model.client.GrantType;
+import com.akmal.oauth2authorizationserver.model.client.Scope;
+import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
 import com.akmal.oauth2authorizationserver.repository.client.GrantRepository;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientCreateAction;
@@ -42,6 +44,9 @@ class ClientServiceTest {
 
   @Mock
   GrantRepository grantRepository;
+
+  @Mock
+  ScopeRepository scopeRepository;
 
   @Captor
   ArgumentCaptor<Client> clientArgumentCaptor;
@@ -75,6 +80,36 @@ class ClientServiceTest {
     assertThat(clientBeforeSave).extracting("clientId")
         .asString()
         .isNotNull();
+  }
+
+  @Test
+  @DisplayName("Tests whether default OIDC scopes are added to the client upon creation")
+  void testAddOidcScopes() {
+    final ClientCreateAction createAction = new ClientCreateAction(
+        null, List.of(), List.of("http://localhost.com"), List.of("http://localhost.com"), List.of("http://localhost.com"), false,
+        false
+    );
+    final List<Scope> expectedScopes =
+        List.of(new Scope(1, "profile", true, "description"));
+
+    when(this.scopeRepository.findAllOidcScopes()).thenReturn(expectedScopes);
+    when(this.clientRepository.save(any(Client.class))).thenReturn(new Client());
+
+    this.clientService.create(createAction);
+    verify(this.clientRepository).save(this.clientArgumentCaptor.capture());
+
+
+    final var capturedClient = this.clientArgumentCaptor
+                                       .getValue();
+
+    assertThat(capturedClient.getAllowedScopes())
+            .asList()
+                .hasSize(1)
+                    .isEqualTo(expectedScopes);
+
+
+
+    verify(this.scopeRepository, times(1)).findAllOidcScopes();
   }
 
   @Test

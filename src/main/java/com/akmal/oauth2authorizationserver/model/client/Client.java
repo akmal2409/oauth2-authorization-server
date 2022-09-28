@@ -39,7 +39,7 @@ public class Client implements Persistable<String> {
   @Column(name = "client_secret")
   private String clientSecret;
 
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "Client_grants",
       joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"),
@@ -71,6 +71,15 @@ public class Client implements Persistable<String> {
   @Column(name = "allow_wildcards_in_redirect_urls")
   private boolean allowWildcardsInRedirectUrls;
 
+  @ManyToMany(fetch = FetchType.LAZY)
+  @JoinTable(
+      name = "Client_scopes",
+                schema = "public",
+                joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"),
+                inverseJoinColumns = @JoinColumn(name = "scope_id", referencedColumnName = "id")
+  )
+  private List<Scope> allowedScopes = new ArrayList<>();
+
   @Transient
   private boolean newEntity;
 
@@ -78,7 +87,6 @@ public class Client implements Persistable<String> {
   public void addGrant(Grant grant) {
     this.grants.add(grant);
   }
-
 
   @Override
   public String getId() {
