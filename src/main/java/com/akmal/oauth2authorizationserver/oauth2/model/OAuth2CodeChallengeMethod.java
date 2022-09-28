@@ -1,14 +1,14 @@
-package com.akmal.oauth2authorizationserver.model.authentication;
+package com.akmal.oauth2authorizationserver.oauth2.model;
 
 /**
  * Represents the hashing algorithm that should be used
  * during PKCE flow of verifying the code_verifier.
  */
-public enum CodeChallengeMethod {
+public enum OAuth2CodeChallengeMethod {
   S256;
 
-  public static CodeChallengeMethod from(String name) {
-    for (CodeChallengeMethod method: values()) {
+  public static OAuth2CodeChallengeMethod from(String name) {
+    for (OAuth2CodeChallengeMethod method: values()) {
       if (method.toString().equalsIgnoreCase(name)) return method;
     }
 
