@@ -8,6 +8,6 @@ CREATE TABLE Scopes (
 CREATE INDEX scope_name_idx ON Scopes(name);
 
 INSERT INTO Scopes VALUES
-(1, 'openid', 'Allow application to verify your identity'),
-(2, 'profile', 'Allow application to access to basic information such as name, username, picture etc'),
-(3, 'email', 'Allow application to see your email address');
+(1, 'openid', true, 'Allow application to verify your identity'),
+(2, 'profile', true, 'Allow application to access to basic information such as name, username, picture etc'),
+(3, 'email', true, 'Allow application to see your email address');
