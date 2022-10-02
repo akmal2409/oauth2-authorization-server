@@ -13,4 +13,4 @@ INSERT INTO Scopes VALUES
 (3, 'address', true, 'Allow application to view your address'),
 (4, 'phone', true, 'Allow application to view your phone'),
 (5, 'offline_access', true, 'Allow application to renew access to your account automatically'),
-(3, 'email', true, 'Allow application to see your email address');
+(6, 'email', true, 'Allow application to see your email address');

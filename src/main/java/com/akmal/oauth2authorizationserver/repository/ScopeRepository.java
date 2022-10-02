@@ -9,4 +9,6 @@ public interface ScopeRepository extends JpaRepository<Scope, Integer> {
 
   @Query("SELECT s FROM Scope s WHERE s.oidcScope = true")
   List<Scope> findAllOidcScopes();
+
+  List<Scope> findAllByNameIsIn(List<String> scopeNames);
 }

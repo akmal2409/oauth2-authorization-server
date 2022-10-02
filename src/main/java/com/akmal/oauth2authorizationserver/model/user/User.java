@@ -1,10 +1,10 @@
-package com.akmal.oauth2authorizationserver.model;
+package com.akmal.oauth2authorizationserver.model.user;
 
+import com.akmal.oauth2authorizationserver.model.Role;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
