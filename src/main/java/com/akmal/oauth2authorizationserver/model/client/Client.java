@@ -49,7 +49,7 @@ public class Client implements Persistable<String> {
 
   @ElementCollection(fetch = FetchType.LAZY)
   @CollectionTable(name = "Client_sign_in_redirect_uris",
-    joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"))
+      joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"))
   @Column(name = "uri")
   private List<String> signInRedirectUris = new ArrayList<>();
 
@@ -74,9 +74,9 @@ public class Client implements Persistable<String> {
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "Client_scopes",
-                schema = "public",
-                joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"),
-                inverseJoinColumns = @JoinColumn(name = "scope_id", referencedColumnName = "id")
+      schema = "public",
+      joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"),
+      inverseJoinColumns = @JoinColumn(name = "scope_id", referencedColumnName = "id")
   )
   private List<Scope> allowedScopes = new ArrayList<>();
 
