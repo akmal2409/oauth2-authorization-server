@@ -20,22 +20,22 @@
       <div class="card-body">
 
 
-        <form class="signin-form" th:action="@{/}" th:method="POST" th:object="${signInModel}">
+        <form class="signin-form" th:action="@{/process-authentication}" th:method="POST">
 
           <div class="singin-input">
             <p style="text-align: center">Sign In</p>
             <div class="form-group-vertical">
               <label class="form-label">Email</label>
-              <input class="form-control" type="text" id="username" required th:field="*{email}"/>
+              <input class="form-control" type="text"  name="email" id="email" required>
             </div>
 
             <div class="form-group-vertical">
               <label class="form-label">Password</label>
-              <input class="form-control" type="password" id="password" th:field="*{password}"/>
+              <input class="form-control" type="password" name="password" id="password"/>
             </div>
 
             <div class="form-group">
-              <input class="form-control" type="checkbox" id="rememberMe" th:field="*{rememberMe}">
+              <input class="form-control" type="checkbox" id="rememberMe">
               <label class="form-label">Remember me</label>
             </div>
           </div>
