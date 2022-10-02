@@ -12,4 +12,5 @@ public class AuthenticationProperties {
   private String loginProcessUrl;
   private String usernameParameterName;
   private String passwordParameterName;
+  private int cookieExpirationTime = 5 * 3600;
 }

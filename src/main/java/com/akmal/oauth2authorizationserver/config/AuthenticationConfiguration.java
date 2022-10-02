@@ -5,6 +5,7 @@ import com.akmal.oauth2authorizationserver.internal.security.authentication.WebA
 import com.akmal.oauth2authorizationserver.internal.security.filter.CustomUsernamePasswordAuthenticationFilter;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
+import com.akmal.oauth2authorizationserver.repository.SessionRepository;
 import com.akmal.oauth2authorizationserver.repository.UserGrantedClientRepository;
 import com.akmal.oauth2authorizationserver.repository.UserRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
@@ -46,8 +47,9 @@ public class AuthenticationConfiguration {
 
   @Bean
   UserCredentialsAuthenticationProvider userCredentialsCookieAuthProvider(UserRepository userRepository,
-      PasswordEncoder passwordEncoder, Generator<String> idGenerator) {
-    return new UserCredentialsAuthenticationProvider(userRepository, passwordEncoder, idGenerator);
+      PasswordEncoder passwordEncoder, Generator<String> idGenerator,
+      SessionRepository sessionRepository, AuthenticationProperties authenticationProperties) {
+    return new UserCredentialsAuthenticationProvider(userRepository, sessionRepository, passwordEncoder, idGenerator, authenticationProperties.getCookieExpirationTime());
   }
 
   @Bean

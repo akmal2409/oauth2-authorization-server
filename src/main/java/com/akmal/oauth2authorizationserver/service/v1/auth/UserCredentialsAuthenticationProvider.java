@@ -5,14 +5,15 @@ import com.akmal.oauth2authorizationserver.idgen.Generator;
 import com.akmal.oauth2authorizationserver.internal.security.authentication.SessionCookieAuthentication;
 import com.akmal.oauth2authorizationserver.internal.security.authentication.WebAuthenticationDetails;
 import com.akmal.oauth2authorizationserver.model.Role;
+import com.akmal.oauth2authorizationserver.model.Session;
 import com.akmal.oauth2authorizationserver.oauth2.AuthenticationHttpSessionAttributes;
-import com.akmal.oauth2authorizationserver.oauth2.authentication.OAuth2WebFlowAuthenticationDetails;
+import com.akmal.oauth2authorizationserver.repository.SessionRepository;
 import com.akmal.oauth2authorizationserver.repository.UserRepository;
+import java.time.Duration;
+import java.time.Instant;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,14 +23,31 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
-@RequiredArgsConstructor
 public class UserCredentialsAuthenticationProvider implements AuthenticationProvider {
+  private static final long COOKIE_EXPIRATION_DEFAULT_PERIOD = 5*3600;
   private final UserRepository userRepository;
+  private final SessionRepository sessionRepository;
   private final PasswordEncoder passwordEncoder;
   private final Generator<String> keyGenerator;
+  private final int cookieExpirationPeriod;
 
-  @Transactional(readOnly = true)
+  public UserCredentialsAuthenticationProvider(UserRepository userRepository,
+      SessionRepository sessionRepository, PasswordEncoder passwordEncoder,
+      Generator<String> keyGenerator, int cookieExpirationPeriod) {
+    this.userRepository = userRepository;
+    this.sessionRepository = sessionRepository;
+    this.passwordEncoder = passwordEncoder;
+    this.keyGenerator = keyGenerator;
+    this.cookieExpirationPeriod = cookieExpirationPeriod;
+  }
+
+  /**
+   * Tries to authenticate the user using username and password pair by hashing and comparing with the
+   * value stored in the db. On success it creates a cookie with a configurable validity and stores the session in the database.
+   * @param authentication
+   * @return
+   */
+  @Transactional
   @Override
   public Authentication authenticate(Authentication authentication)  {
 
@@ -51,8 +69,12 @@ public class UserCredentialsAuthenticationProvider implements AuthenticationProv
 
     final var sessionId = this.keyGenerator.next();
     final var sessionCookie = new Cookie(AuthenticationHttpSessionAttributes.SSO_SESSION_ID, sessionId);
+    sessionCookie.setMaxAge(cookieExpirationPeriod); // 5hours
 
-    sessionCookie.setMaxAge(3600*5); // 5hours
+    final var session = new Session(sessionId, Instant.now().plus(Duration.ofSeconds(cookieExpirationPeriod)), Instant.now(),
+        user, request.getRemoteAddr());
+    this.sessionRepository.save(session);
+
     response.addCookie(sessionCookie);
 
     return  new SessionCookieAuthentication(user.getRoles().stream().map(Role::getName).map(SimpleGrantedAuthority::new).toList(),
