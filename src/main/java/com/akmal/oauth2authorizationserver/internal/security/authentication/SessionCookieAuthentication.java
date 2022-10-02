@@ -1,4 +1,4 @@
-package com.akmal.oauth2authorizationserver.internal.authentication;
+package com.akmal.oauth2authorizationserver.internal.security.authentication;
 
 import java.security.Principal;
 import java.util.Collection;
