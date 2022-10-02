@@ -1,4 +1,6 @@
 spring:
+  session:
+    store-type: none
   jpa:
     hibernate:
       naming:
@@ -16,3 +18,13 @@ spring:
     password: "${PG_PASSWORD:auth-service}"
     driver-class-name: org.postgresql.Driver
 
+project:
+  authentication:
+    login-url: "/authenticate"
+    loginProcessUrl: '/process-authentication'
+    username-parameter-name: "email"
+    password-parameter-name: "password"
+
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
