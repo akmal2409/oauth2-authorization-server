@@ -1,6 +1,6 @@
 package com.akmal.oauth2authorizationserver.web.model;
 
-import com.akmal.oauth2authorizationserver.model.User;
+import com.akmal.oauth2authorizationserver.model.user.User;
 import java.time.Instant;
 import java.util.List;
 import javax.validation.constraints.Email;
