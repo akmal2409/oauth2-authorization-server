@@ -20,11 +20,11 @@ spring:
 
 project:
   authentication:
-    login-url: "/authenticate"
-    loginProcessUrl: '/process-authentication'
+    login-url: "/sign-in.html"
+    loginProcessUrl: '/authenticate'
     username-parameter-name: "email"
     password-parameter-name: "password"
 
-#logging:
-#  level:
-#    org.springframework.security: DEBUG
+logging:
+  level:
+    org.springframework.security: DEBUG

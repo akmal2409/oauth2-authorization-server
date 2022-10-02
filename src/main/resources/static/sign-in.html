@@ -1,27 +1,25 @@
-<!DOCTYPE html SYSTEM "http://thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
 
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Sign in</title>
-  <link rel="stylesheet" th:href="@{/styles/styles.css}"/>
+  <link rel="stylesheet" href="/styles/styles.css"/>
 </head>
 <body>
 
   <div class="container signin-container">
     <div class="card signin-card">
       <div class="card-header">
-        <img class="card-image" th:src="@{/assets/images/logo.png}"/>
+        <img class="card-image" src="/assets/images/logo.png"/>
       </div>
       <div class="card-body">
 
 
-        <form class="signin-form" th:action="@{/process-authentication}" th:method="POST">
-
+        <form class="signin-form" action="/authenticate" method="POST" id="signinform">
+          <input type="hidden" name="_csrf" id="csrf-input">
           <div class="singin-input">
             <p style="text-align: center">Sign In</p>
             <div class="form-group-vertical">
@@ -49,5 +47,25 @@
       </div>
     </div>
   </div>
+
+<script>
+  const cookies = (document.cookie || '').split("; ");
+  let csrfToken;
+
+  if (cookies && cookies.length > 0) {
+    for (let i = 0; i < cookies.length; i++) {
+      if (cookies[i].startsWith("XSRF-TOKEN")) {
+        csrfToken = cookies[i].split("=")[1];
+        break;
+      }
+    }
+  }
+
+  const hiddenCsrfInput = document.getElementById('csrf-input');
+
+  if (csrfToken && hiddenCsrfInput) {
+    hiddenCsrfInput.value = csrfToken;
+  }
+</script>
 </body>
 </html>
