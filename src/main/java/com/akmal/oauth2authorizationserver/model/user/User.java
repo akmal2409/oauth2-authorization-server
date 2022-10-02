@@ -1,6 +1,7 @@
 package com.akmal.oauth2authorizationserver.model.user;
 
 import com.akmal.oauth2authorizationserver.model.Role;
+import com.akmal.oauth2authorizationserver.model.Session;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -71,6 +73,9 @@ public class User {
   private String phoneNumber;
   @Column(name = "email_verified")
   private boolean emailVerified;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+  private List<Session> sessions;
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable(
