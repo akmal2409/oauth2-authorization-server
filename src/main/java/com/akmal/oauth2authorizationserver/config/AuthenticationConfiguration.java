@@ -57,12 +57,12 @@ public class AuthenticationConfiguration {
 
   @Bean
   OAuth2WebFlowRequestAuthenticationProvider oAuth2WebFlowRequestAuthenticationProvider(
-      ClientRepository clientRepository, UserRepository userRepository,
+      ClientRepository clientRepository,
       UserGrantedClientRepository userGrantedClientRepository,
       ScopeRepository scopeRepository
   ) {
     return new OAuth2WebFlowRequestAuthenticationProvider(
-        clientRepository, userRepository, userGrantedClientRepository,
+        clientRepository, userGrantedClientRepository,
         scopeRepository
     );
   }
