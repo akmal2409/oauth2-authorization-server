@@ -45,7 +45,9 @@ public class CookieIntrospectionFilter extends OncePerRequestFilter {
     final var authentication = this.authenticationManager.authenticate(new SessionCookieAuthentication(List.of(), cookie.getValue(), null, false,
         this.webAuthenticationDetailsSource.buildDetails(new Tuple<>(request, response))));
 
-    SecurityContextHolder.getContext().setAuthentication(authentication);
+    if (authentication != null) {
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
 
     filterChain.doFilter(request, response);
   }
