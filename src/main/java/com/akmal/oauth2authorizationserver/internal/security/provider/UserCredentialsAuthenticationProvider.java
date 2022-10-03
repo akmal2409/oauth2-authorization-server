@@ -1,4 +1,4 @@
-package com.akmal.oauth2authorizationserver.service.v1.auth;
+package com.akmal.oauth2authorizationserver.internal.security.provider;
 
 import com.akmal.oauth2authorizationserver.exception.auth.AuthenticationException;
 import com.akmal.oauth2authorizationserver.idgen.Generator;

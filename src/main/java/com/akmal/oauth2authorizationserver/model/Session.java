@@ -38,4 +38,8 @@ public class Session {
 
   @Column(name = "remote_address")
   private String remoteAddress;
+
+  public boolean isExpired() {
+    return this.expiresAt.isBefore(Instant.now());
+  }
 }

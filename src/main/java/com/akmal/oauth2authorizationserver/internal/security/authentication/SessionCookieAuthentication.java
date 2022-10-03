@@ -10,6 +10,7 @@ public class SessionCookieAuthentication implements Authentication {
   private final String sessionId;
   private final String sub;
   private boolean authenticated;
+  private Object details;
 
   public SessionCookieAuthentication(Collection<? extends GrantedAuthority> authorities,
       String sessionId, String sub, boolean authenticated) {
@@ -17,6 +18,15 @@ public class SessionCookieAuthentication implements Authentication {
     this.sessionId = sessionId;
     this.sub = sub;
     this.authenticated = authenticated;
+  }
+
+  public SessionCookieAuthentication(Collection<? extends GrantedAuthority> authorities,
+      String sessionId, String sub, boolean authenticated, Object details) {
+    this.authorities = authorities;
+    this.sessionId = sessionId;
+    this.sub = sub;
+    this.authenticated = authenticated;
+    this.details = details;
   }
 
   @Override
@@ -31,7 +41,7 @@ public class SessionCookieAuthentication implements Authentication {
 
   @Override
   public Object getDetails() {
-    return null;
+    return this.details;
   }
 
   @Override

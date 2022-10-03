@@ -45,6 +45,7 @@ public class SignUpModel {
         this.email,
         null,
         false,
+        List.of(),
         List.of()
     );
   }

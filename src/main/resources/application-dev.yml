@@ -25,6 +25,6 @@ project:
     username-parameter-name: "email"
     password-parameter-name: "password"
 
-logging:
-  level:
-    org.springframework.security: DEBUG
+#logging:
+#  level:
+#    org.springframework.security: DEBUG
