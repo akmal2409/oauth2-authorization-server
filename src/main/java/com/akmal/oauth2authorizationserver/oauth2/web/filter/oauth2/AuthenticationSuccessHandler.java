@@ -1,4 +1,4 @@
-package com.akmal.oauth2authorizationserver.web.filter.oauth2;
+package com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2;
 
 import com.akmal.oauth2authorizationserver.oauth2.AuthenticationHttpSessionAttributes;
 import java.io.IOException;

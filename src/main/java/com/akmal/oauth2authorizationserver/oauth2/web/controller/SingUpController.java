@@ -1,7 +1,7 @@
-package com.akmal.oauth2authorizationserver.web.controller;
+package com.akmal.oauth2authorizationserver.oauth2.web.controller;
 
 import com.akmal.oauth2authorizationserver.service.v1.auth.AuthenticationService;
-import com.akmal.oauth2authorizationserver.web.model.SignUpModel;
+import com.akmal.oauth2authorizationserver.oauth2.web.model.SignUpModel;
 import java.util.Map;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;

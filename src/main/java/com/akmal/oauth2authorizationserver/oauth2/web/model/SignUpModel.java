@@ -1,4 +1,4 @@
-package com.akmal.oauth2authorizationserver.web.model;
+package com.akmal.oauth2authorizationserver.oauth2.web.model;
 
 import com.akmal.oauth2authorizationserver.model.user.User;
 import java.time.Instant;

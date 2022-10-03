@@ -6,7 +6,7 @@ import com.akmal.oauth2authorizationserver.idgen.Generator;
 import com.akmal.oauth2authorizationserver.model.Role.RoleType;
 import com.akmal.oauth2authorizationserver.repository.RoleRepository;
 import com.akmal.oauth2authorizationserver.repository.UserRepository;
-import com.akmal.oauth2authorizationserver.web.model.SignUpModel;
+import com.akmal.oauth2authorizationserver.oauth2.web.model.SignUpModel;
 import java.time.Instant;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

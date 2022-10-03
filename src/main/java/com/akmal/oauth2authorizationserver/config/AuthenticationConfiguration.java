@@ -13,7 +13,7 @@ import com.akmal.oauth2authorizationserver.repository.UserGrantedClientRepositor
 import com.akmal.oauth2authorizationserver.repository.UserRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
 import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
-import com.akmal.oauth2authorizationserver.web.filter.oauth2.FederatedAuthenticationEntryPoint;
+import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.FederatedAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -70,7 +70,7 @@ public class AuthenticationConfiguration {
 
   @Bean
   AuthenticationSuccessHandler authenticationSuccessHandler() {
-    return new com.akmal.oauth2authorizationserver.web.filter.oauth2.AuthenticationSuccessHandler();
+    return new com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.AuthenticationSuccessHandler();
   }
 
   @Bean
