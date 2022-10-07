@@ -24,7 +24,7 @@ import org.springframework.security.web.authentication.AuthenticationConverter;
 import org.springframework.util.StringUtils;
 
 public class OAuth2WebFlowRequestAuthenticationConverter implements AuthenticationConverter  {
-  private static final String ERROR_URI_HTTP_REQUEST_SPECS = "https://datatracker.ietf.org/doc/html/rfc6749#section-4.2.1";
+  public static final String ERROR_URI_HTTP_REQUEST_SPECS = "https://datatracker.ietf.org/doc/html/rfc6749#section-4.2.1";
   private final AuthenticationDetailsSource<HttpServletRequest, OAuth2WebFlowAuthenticationDetails> detailsSource;
 
   public OAuth2WebFlowRequestAuthenticationConverter(
@@ -84,7 +84,7 @@ public class OAuth2WebFlowRequestAuthenticationConverter implements Authenticati
     final var idpScopes = StringUtils.hasText(request.getParameter(OAuth2ParameterNames.IDP_SCOPE)) ?
                               Arrays.asList(request.getParameter(OAuth2ParameterNames.IDP_SCOPE).split(",")) :
                               List.<String>of();
-    final var responseMode = OAuth2ResponseMode.from(request.getParameter(OAuth2ParameterNames.RESPONSE_TYPE));
+    final var responseMode = OAuth2ResponseMode.from(request.getParameter(OAuth2ParameterNames.RESPONSE_MODE));
 
     final var internalAuthentication = SecurityContextHolder.getContext().getAuthentication(); // nullable, for success auth request needs to be set by the preceding filter-chain
 
