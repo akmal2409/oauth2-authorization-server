@@ -72,16 +72,4 @@ public class AuthenticationConfiguration {
   AuthenticationSuccessHandler authenticationSuccessHandler() {
     return new com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.AuthenticationSuccessHandler();
   }
-
-  @Bean
-  OAuth2WebFlowRequestAuthenticationProvider oAuth2WebFlowRequestAuthenticationProvider(
-      ClientRepository clientRepository,
-      UserGrantedClientRepository userGrantedClientRepository,
-      ScopeRepository scopeRepository
-  ) {
-    return new OAuth2WebFlowRequestAuthenticationProvider(
-        clientRepository, userGrantedClientRepository,
-        scopeRepository
-    );
-  }
 }

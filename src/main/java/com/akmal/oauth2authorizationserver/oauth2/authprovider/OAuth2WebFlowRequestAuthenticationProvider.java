@@ -14,8 +14,9 @@ import com.akmal.oauth2authorizationserver.oauth2.config.OAuth2ParameterNames;
 import com.akmal.oauth2authorizationserver.oauth2.model.OAuth2ResponseType;
 import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
 import com.akmal.oauth2authorizationserver.repository.UserGrantedClientRepository;
-import com.akmal.oauth2authorizationserver.repository.UserRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
+import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Custom authentication provider that verifies the client configuration, whether the client has
@@ -35,14 +37,18 @@ public class OAuth2WebFlowRequestAuthenticationProvider implements Authenticatio
   private final ClientRepository clientRepository;
   private final UserGrantedClientRepository userGrantedClientRepository;
   private final ScopeRepository scopeRepository;
+  private final TransactionPropagator transactionPropagator;
 
   public OAuth2WebFlowRequestAuthenticationProvider(ClientRepository clientRepository,
-      UserGrantedClientRepository userGrantedClientRepository, ScopeRepository scopeRepository) {
+      UserGrantedClientRepository userGrantedClientRepository, ScopeRepository scopeRepository,
+      TransactionPropagator transactionPropagator) {
     this.clientRepository = clientRepository;
     this.userGrantedClientRepository = userGrantedClientRepository;
     this.scopeRepository = scopeRepository;
+    this.transactionPropagator = transactionPropagator;
   }
 
+  @Transactional
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {
     final OAuth2WebFlowRequestAuthentication webFlowAuth = (OAuth2WebFlowRequestAuthentication) authentication;
@@ -74,8 +80,10 @@ public class OAuth2WebFlowRequestAuthenticationProvider implements Authenticatio
           "Redirect URI is not present in the client configuration", null, state);
     }
 
-    final var clientScopes = new HashSet<>(
-        client.getAllowedScopes().stream().map(Scope::getName).toList());
+    final var clientScopes = client.getAllowedScopes().stream().map(Scope::getName)
+                                 .collect(Collectors.toCollection(
+                                     HashSet::new));
+
     for (String requestedScope : webFlowAuth.getScopes()) {
       if (!clientScopes.contains(requestedScope)) {
         throwError(OAuth2ErrorTypes.INVALID_SCOPE,
@@ -89,10 +97,10 @@ public class OAuth2WebFlowRequestAuthenticationProvider implements Authenticatio
           false, List.of(), List.of());
     }
 
-    Tuple<List<Scope>, List<Scope>> scopeTuple = this.findNotGrantedScopesForUser(
-        (String) internalAuthentication.getPrincipal(),
+    Tuple<List<Scope>, List<Scope>> scopeTuple = this.transactionPropagator.withinCurrent(() -> this.findNotGrantedScopesForUser(
+        ((Principal) internalAuthentication.getPrincipal()).getName(),
         client.getClientId(),
-        webFlowAuth.getScopes());
+        webFlowAuth.getScopes()));
 
     return new OAuth2WebFlowConsentAuthentication(webFlowAuth,
         client.isRequireUserConsent() && !scopeTuple.getT1().isEmpty(), scopeTuple.getT2(),
@@ -114,7 +122,8 @@ public class OAuth2WebFlowRequestAuthenticationProvider implements Authenticatio
   private Tuple<List<Scope>, List<Scope>> findNotGrantedScopesForUser(String sub,
       String clientId, List<String> requestedScopes) {
     UserGrantedClient grantedClient = this.userGrantedClientRepository
-                                          .findBySubAndClientId(sub, clientId).get();
+                                          .findBySubAndClientId(sub, clientId)
+                                          .orElse(null);
 
     Set<String> requestedScopeSet = new HashSet<>(requestedScopes);
 
