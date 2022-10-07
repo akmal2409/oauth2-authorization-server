@@ -3,6 +3,7 @@ package com.akmal.oauth2authorizationserver.service.v1;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -17,12 +18,14 @@ import com.akmal.oauth2authorizationserver.model.client.Scope;
 import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
 import com.akmal.oauth2authorizationserver.repository.client.GrantRepository;
+import com.akmal.oauth2authorizationserver.rest.v1.dto.client.SecretGenerationResponse;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientCreateAction;
 import com.akmal.oauth2authorizationserver.service.v1.client.ClientService;
 import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
 import com.akmal.oauth2authorizationserver.validator.client.ClientProperties;
 import com.akmal.oauth2authorizationserver.validator.client.ClientValidator;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +35,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
 class ClientServiceTest {
@@ -48,6 +52,9 @@ class ClientServiceTest {
   @Mock
   ScopeRepository scopeRepository;
 
+  @Mock
+  Generator<String> secretGenerator;
+
   @Captor
   ArgumentCaptor<Client> clientArgumentCaptor;
 
@@ -56,6 +63,9 @@ class ClientServiceTest {
 
   @Spy
   TransactionPropagator transactionPropagator = new TransactionPropagator();
+
+  @Mock
+  PasswordEncoder passwordEncoder;
 
   @InjectMocks
   ClientService clientService;
@@ -135,6 +145,37 @@ class ClientServiceTest {
     assertThat(clientBeforeSave.getTrustedOrigins()).isEqualTo(createAction.trustedOrigins());
     assertThat(clientBeforeSave.getSignInRedirectUris()).isEqualTo(createAction.signInRedirectUris());
     assertThat(clientBeforeSave.getSignOutRedirectUris()).isEqualTo(createAction.signOutRedirectUris());
+  }
+
+  @Test
+  @DisplayName("Test should generate and save client secret")
+  void testGenerateClientSecret() {
+    final var expectedClient = new Client();
+    final var expectedSecret = "secret";
+    final var expectedClientId = "2323";
+    final var expectedHashedSecret = "hashedX3444";
+    final var expectedSecretResponse = new SecretGenerationResponse(expectedClientId, expectedSecret);
+
+    when(this.clientRepository.findById(anyString())).thenReturn(Optional.of(expectedClient));
+    when(this.secretGenerator.next()).thenReturn(expectedSecret);
+    when(this.passwordEncoder.encode(anyString())).thenReturn(expectedHashedSecret);
+
+
+    final var actualSecretResponse = this.clientService.generateSecret(expectedClientId);
+    verify(this.clientRepository).save(clientArgumentCaptor.capture());
+
+    final var clientBeforeSave = clientArgumentCaptor.getValue();
+
+    assertThat(actualSecretResponse).usingRecursiveComparison()
+                                        .usingDefaultComparator()
+                                            .isEqualTo(expectedSecretResponse);
+
+    assertThat(clientBeforeSave).extracting(Client::getClientSecret)
+                                    .isEqualTo(expectedHashedSecret);
+
+    verify(this.clientRepository, times(1)).findById(anyString());
+    verify(this.secretGenerator, times(1)).next();
+    verify(this.passwordEncoder, times(1)).encode(anyString());
   }
 }
 
