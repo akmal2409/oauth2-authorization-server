@@ -7,6 +7,7 @@ import com.akmal.oauth2authorizationserver.internal.security.filter.RestAuthenti
 import com.akmal.oauth2authorizationserver.internal.security.provider.SessionCookieAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.internal.security.provider.UserCredentialsAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
+import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2AuthorizationEndpointFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -35,7 +36,8 @@ public class SecurityConfiguration {
       CustomUsernamePasswordAuthenticationFilter authFilter,
       @Qualifier("federatedAuthenticationEntryPoint") AuthenticationEntryPoint federatedAuthenticationEntryPoint,
       RestAuthenticationEntryPoint restAuthenticationEntryPoint,
-      AuthenticationManager authenticationManager) throws Exception {
+      AuthenticationManager authenticationManager,
+      OAuth2AuthorizationEndpointFilter oAuth2AuthorizationEndpointFilter) throws Exception {
     return http
                .csrf(
                    csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
@@ -51,13 +53,15 @@ public class SecurityConfiguration {
                .addFilterBefore(new CookieIntrospectionFilter(authenticationManager,
                        new WebAuthenticationDetailsSource()),
                    BasicAuthenticationFilter.class)
+               .addFilterAfter(oAuth2AuthorizationEndpointFilter, CookieIntrospectionFilter.class)
                .exceptionHandling(customizer -> customizer
                                                     .defaultAuthenticationEntryPointFor(
                                                         restAuthenticationEntryPoint,
-                                                        new AntPathRequestMatcher("/api"))
+                                                        new AntPathRequestMatcher("/api/**"))
                                                     .defaultAuthenticationEntryPointFor(
                                                         federatedAuthenticationEntryPoint,
-                                                        new AntPathRequestMatcher("/")))
+                                                        new AntPathRequestMatcher("/**"))
+                                                    )
                .build();
   }
 
