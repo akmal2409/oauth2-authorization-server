@@ -38,7 +38,7 @@ public class AuthenticationService {
 
     final var userRole = this.roleRepository.findByName(RoleType.ROLE_USER.type)
                              .orElseThrow(() -> {
-                               log.error("type=INTERNAL_FAILURE;component=AuthenticationService.java;reason=ROLE_USER not found");
+                               log.error("type=INTERNAL_FAILURE;component=AuthenticationService#createUser;reason=ROLE_USER not found");
                                return new InternalServerErrorException("Role could not be assigned");
                              });
 
