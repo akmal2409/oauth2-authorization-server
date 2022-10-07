@@ -110,4 +110,21 @@ public class OAuth2WebFlowRequestAuthentication extends AbstractOAuth2Authentica
   public List<String> getScopes() {
     return scopes;
   }
+
+  @Override
+  public String toString() {
+    return "OAuth2WebFlowRequestAuthentication{" +
+               "clientId='" + clientId + '\'' +
+               ", redirectUri='" + redirectUri + '\'' +
+               ", responseTypes=" + responseTypes +
+               ", state=[STRIPPED]" +
+               ", codeChallenge='[STRIPPED]'" +
+               ", codeChallengeMethod=" + codeChallengeMethod +
+               ", nonce='[STRIPPED]'" +
+               ", idp='" + idp + '\'' +
+               ", responseMode=" + responseMode +
+               ", idpScopes=" + idpScopes +
+               ", scopes=" + scopes +
+               '}';
+  }
 }

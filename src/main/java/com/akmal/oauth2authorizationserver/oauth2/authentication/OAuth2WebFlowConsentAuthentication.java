@@ -51,4 +51,12 @@ public class OAuth2WebFlowConsentAuthentication extends OAuth2WebFlowRequestAuth
   public  boolean requiresConsent() {
     return this.requiresConsent && !this.notGrantedScopes.isEmpty();
   }
+
+  public List<Scope> getGrantedScopes() {
+    return grantedScopes;
+  }
+
+  public List<Scope> getNotGrantedScopes() {
+    return notGrantedScopes;
+  }
 }
