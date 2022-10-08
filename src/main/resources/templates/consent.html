@@ -1,0 +1,80 @@
+<!DOCTYPE html SYSTEM "http://thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Consent</title>
+  <link rel="stylesheet" th:href="@{/styles/styles.css}"/>
+  <link rel="icon" th:href="@{assets/images/favicon.svg}"/>
+  <script th:src="@{https://kit.fontawesome.com/27de724be6.js}" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="container signin-container">
+  <div class="card signup-card">
+    <div class="card-header">
+      <img class="card-image on-load-rotating-image" th:src="@{/assets/images/logo.png}"/>
+    </div>
+    <div class="card-body">
+
+
+      <form class="signin-form" th:method="POST" th:action="@{/consent}" th:object="${consent}">
+        <input type="hidden" th:field="*{clientId}">
+        <input type="hidden" th:field="*{targetUrl}">
+        <input type="hidden" th:field="*{allowedScopes}">
+        <div class="singin-input" style="height: 100%">
+          <p style="text-align: center; font-size: 1.2rem"><span th:text="${clientName}"></span> requests permission(s)</p>
+
+
+
+          <div class="scope-lists-container">
+
+            <!--            Pending scopes -->
+            <ul class="scope-list-container">
+              <li class="scope-list-item" th:each="scope : ${pendingScopes}">
+                <i class="fa-solid fa-fingerprint"></i>&nbsp;&nbsp;
+                <span th:text="${scope.description}"></span>
+              </li>
+            </ul>
+
+            <!--            granted scopes -->
+            <div th:if="${grantedScopes.size > 0}">
+              <p style="text-align: center; font-size: 1.1rem">You have previously granted following access to the application</p>
+
+              <ul class="scope-list-container" th:if="${grantedScopes.size > 0}">
+                <li class="scope-list-item" th:each="scope : ${grantedScopes}">
+                  <i class="fa-solid fa-fingerprint"></i>&nbsp;&nbsp;
+                  <span th:text="${scope.description}"></span>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="form-actions gap-2">
+          <button type="submit" class="btn btn-lg btn-primary">
+            Approve
+          </button>
+          <button onclick="onDenyHandler()" type="button" class="btn btn-lg btn-danger">
+            Deny
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const onDenyHandler = function() {
+    window.location.href = "/account";
+  }
+
+</script>
+</body>
+</html>

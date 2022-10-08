@@ -4,6 +4,9 @@
  --base-font-size: 16px;
  --bg-light-grey: #E0E0E0;
  --primary: rgb(22, 98, 221);
+ --primary-hover: #4a88ec;
+ --danger: #ef233c;
+ --danger-hover: #f35b6d;
 }
 
 html, body {
@@ -110,7 +113,25 @@ body {
 }
 
 .form-actions {
+  display: flex;
+  flex-direction: column;
   margin-bottom: 1rem;
+}
+
+/*flex*/
+.gap-1 {
+  row-gap: 4px;
+  column-gap: 4px;
+}
+
+.gap-2 {
+  row-gap: 7px;
+  column-gap: 7px;
+}
+
+.gap-3 {
+  row-gap: 12px;
+  column-gap: 12px;
 }
 
 /* FORM */
@@ -159,17 +180,76 @@ input.form-control:focus {
   cursor: pointer;
   border-radius: 5px;
   padding: 0.5rem;
+  font-size: 1.05rem;
+  letter-spacing: 0.05rem;
+  outline: none;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
+
 
 .btn-lg {
   width: 100%;
-  min-height: 3rem;
+  font-size: 1.13rem;
+  min-height: 2.5rem;
 }
 
 .btn-primary {
   background-color: var(--primary);
   color: #fff;
-  font-size: 1.05rem;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background-color: var(--danger-hover);
+}
+
+/*consent page*/
+.scope-lists-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  height: 100%;
+  overflow-y: auto;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.scope-list-container {
+  padding: 0 0.8rem;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+
+.scope-list-item {
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-wrap: nowrap;
+  padding: 4px 0;
+}
+
+.scope-list-item>i {
+  color: var(--primary);
+  font-size: 1.1rem;
+}
+
+.scope-list-item>span {
+  font-size: 0.9rem;
 }
 
 
