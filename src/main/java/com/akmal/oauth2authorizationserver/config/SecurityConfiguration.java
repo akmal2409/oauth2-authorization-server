@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -44,7 +45,6 @@ public class SecurityConfiguration {
                .sessionManagement(
                    sessions -> sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                .authorizeRequests(customizer -> customizer
-                                                    .antMatchers(WHITELISTED_RESOURCES).permitAll()
                                                     .antMatchers(this.authProps.getLoginUrl(),
                                                         this.authProps.getLoginProcessUrl())
                                                     .permitAll()
@@ -63,6 +63,11 @@ public class SecurityConfiguration {
                                                         new AntPathRequestMatcher("/**"))
                                                     )
                .build();
+  }
+
+  @Bean
+  WebSecurityCustomizer webSecurityCustomizer() {
+    return (web) -> web.ignoring().antMatchers(WHITELISTED_RESOURCES);
   }
 
   @Bean

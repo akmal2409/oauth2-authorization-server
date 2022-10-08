@@ -37,11 +37,13 @@ public class FederatedAuthenticationEntryPoint implements AuthenticationEntryPoi
 
     if (StringUtils.hasText(idp)) {
       // federate the authentication to the 3rd party Idp after validation
+      response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "External IDP authentication is not implemented");
     } else {
       // redirect user to the login page with the targetUrl query parameter set to the request url
-      final var targetUrl = request.getRequestURL().toString();
+      final var targetUrl = RequestUtils.getFullRequestUrl(request);
       request.getSession().setAttribute(AuthenticationHttpSessionAttributes.TARGET_URL, targetUrl);
       this.webBasedLoginEntryPoint.commence(request, response, authException);
     }
   }
+
 }
