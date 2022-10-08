@@ -19,7 +19,7 @@ public class AuthenticationSuccessHandler implements
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException {
-    log.info("SUCESS HANDLER INVOKED");
+
     String targetUrl = (String) request.getSession().getAttribute(AuthenticationHttpSessionAttributes.TARGET_URL);
 
     if (targetUrl == null) {
