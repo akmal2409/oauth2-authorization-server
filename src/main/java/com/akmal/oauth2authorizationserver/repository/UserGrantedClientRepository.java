@@ -11,4 +11,8 @@ public interface UserGrantedClientRepository extends JpaRepository<UserGrantedCl
   @Query("SELECT ugc FROM UserGrantedClient ugc WHERE ugc.sub = :sub AND "
              + "ugc.clientId = :clientId")
   Optional<UserGrantedClient> findBySubAndClientId(@Param("sub") String sub, @Param("clientId") String clientId);
+
+  @Query("SELECT ugc FROM UserGrantedClient ugc JOIN FETCH ugc.grantedScopes WHERE ugc.sub = :sub AND "
+             + "ugc.clientId = :clientId")
+  Optional<UserGrantedClient> findBySubAndClientIdJoinedWithScopes(@Param("sub") String sub, @Param("clientId") String clientId);
 }
