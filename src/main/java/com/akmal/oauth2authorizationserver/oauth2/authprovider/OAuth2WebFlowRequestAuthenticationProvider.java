@@ -125,17 +125,20 @@ public class OAuth2WebFlowRequestAuthenticationProvider implements Authenticatio
                                           .findBySubAndClientId(sub, clientId)
                                           .orElse(null);
 
-    Set<String> requestedScopeSet = new HashSet<>(requestedScopes);
+    Set<String> grantedScopeSet = new HashSet<>(grantedClient == null ?
+                                                   List.of() :
+                                                   grantedClient.getGrantedScopes().stream().map(Scope::getName).toList());
 
     if (grantedClient == null || grantedClient.getGrantedScopes().isEmpty()) {
       // then we need to request all scopes
       return new Tuple<>(this.scopeRepository.findAllByNameIsIn(requestedScopes),
           List.of());
     } else {
+      List<Scope> requestedScopeList = this.scopeRepository.findAllByNameIsIn(requestedScopes);
       List<Scope> notGrantedScopes = new ArrayList<>();
-      for (Scope grantedScope : grantedClient.getGrantedScopes()) {
-        if (!requestedScopeSet.contains(grantedScope.getName())) {
-          notGrantedScopes.add(grantedScope);
+      for (Scope requestedScope: requestedScopeList) {
+        if (!grantedScopeSet.contains(requestedScope.getName())) {
+          notGrantedScopes.add(requestedScope);
         }
       }
 
