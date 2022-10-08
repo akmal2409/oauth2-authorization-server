@@ -6,14 +6,10 @@ import com.akmal.oauth2authorizationserver.internal.security.filter.CustomUserna
 import com.akmal.oauth2authorizationserver.internal.security.filter.RestAuthenticationEntryPoint;
 import com.akmal.oauth2authorizationserver.internal.security.provider.SessionCookieAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.internal.security.provider.UserCredentialsAuthenticationProvider;
-import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
-import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
-import com.akmal.oauth2authorizationserver.repository.SessionRepository;
-import com.akmal.oauth2authorizationserver.repository.UserGrantedClientRepository;
-import com.akmal.oauth2authorizationserver.repository.UserRepository;
-import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
-import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.FederatedAuthenticationEntryPoint;
+import com.akmal.oauth2authorizationserver.repository.SessionRepository;
+import com.akmal.oauth2authorizationserver.repository.UserRepository;
+import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

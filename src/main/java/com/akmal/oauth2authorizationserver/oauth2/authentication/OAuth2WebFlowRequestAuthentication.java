@@ -5,6 +5,7 @@ import com.akmal.oauth2authorizationserver.oauth2.model.OAuth2ResponseMode;
 import com.akmal.oauth2authorizationserver.oauth2.model.OAuth2ResponseType;
 import java.util.Collection;
 import java.util.List;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
@@ -64,7 +65,7 @@ public class OAuth2WebFlowRequestAuthentication extends AbstractOAuth2Authentica
 
   @Override
   public String getName() {
-    return null;
+    return this.principal != null ? ((Authentication) this.principal).getName() : null;
   }
 
   public String getClientId() {
