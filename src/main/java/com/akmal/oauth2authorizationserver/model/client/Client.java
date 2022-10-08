@@ -39,7 +39,7 @@ public class Client implements Persistable<String> {
   @Column(name = "client_secret")
   private String clientSecret;
 
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(
       name = "Client_grants",
       joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"),
