@@ -1,13 +1,16 @@
 package com.akmal.oauth2authorizationserver.config;
 
+import com.akmal.oauth2authorizationserver.oauth2.authorization.strategy.GrantBasedAuthorizationStrategyFactory;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2AuthorizationEndpointFilter;
 import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
 import com.akmal.oauth2authorizationserver.repository.UserGrantedClientRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
 import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.AuthenticationManager;
 
 /**
@@ -33,7 +36,9 @@ public class OAuth2AuthorizationConfiguration {
   }
 
   @Bean
-  OAuth2AuthorizationEndpointFilter oAuth2AuthorizationEndpointFilter(AuthenticationManager authenticationManager) {
-    return new OAuth2AuthorizationEndpointFilter(authenticationManager);
+  @DependsOn("grantBasedAuthorizationStrategiesConfiguration")
+  OAuth2AuthorizationEndpointFilter oAuth2AuthorizationEndpointFilter(AuthenticationManager authenticationManager,
+      @Qualifier("grantBasedAuthorizationStrategyFactory") GrantBasedAuthorizationStrategyFactory grantBasedAuthorizationStrategyFactory) {
+    return new OAuth2AuthorizationEndpointFilter(authenticationManager, grantBasedAuthorizationStrategyFactory);
   }
 }
