@@ -93,7 +93,7 @@ public class RsaKeyService {
 
       KeyPair keyPairLocal = null;
 
-      if (!keyStore.containsAlias(internalOauth2ConfigProps.getCertificateAlias()) || !keyStore.containsAlias(internalOauth2ConfigProps.getPrivateKeyAlias())) {
+      if (!keyStore.containsAlias(internalOauth2ConfigProps.getPrivateKeyAlias())) {
         keyPairLocal = this.generateKeyPair(internalOauth2ConfigProps.getKeyLength(), internalOauth2ConfigProps.getKeyAlg());
 
         final X509Certificate certificate = this.generateCertificate(keyPairLocal.getPrivate(), keyPairLocal.getPublic(), internalOauth2ConfigProps.getSignatureAlg(),
