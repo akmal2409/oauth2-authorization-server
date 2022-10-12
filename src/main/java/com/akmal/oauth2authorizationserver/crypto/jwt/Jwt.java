@@ -2,15 +2,16 @@ package com.akmal.oauth2authorizationserver.crypto.jwt;
 
 import com.akmal.oauth2authorizationserver.crypto.jwt.signature.JwtSignatureStrategy;
 import com.akmal.oauth2authorizationserver.exception.crypto.JwtCreationException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 import java.security.SignatureException;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +29,8 @@ public class Jwt {
   private String encodedSignature;
   private final ObjectMapper objectMapper;
 
+  private Map<String, Object> properties;
+
   private Jwt(JwtBuilder builder, Key privateKey)
       throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
     this(builder.alg == null ? Algorithm.RS256 : builder.alg,
@@ -41,12 +44,18 @@ public class Jwt {
                             .concat(encodedPayload)
                             .concat(".")
                             .concat(encodedSignature);
+    this.properties = new HashMap<>();
+
+    for (Claim claim: this.claims) {
+      this.properties.put(claim.name(), claim.value());
+    }
   }
 
   private Jwt(Algorithm alg, List<Claim> claims, ObjectMapper mapper) {
     this.alg = alg;
     this.claims = claims;
     this.objectMapper = mapper;
+    this.properties = new HashMap<>();
   }
 
   private String encodeHeader() {
@@ -110,6 +119,36 @@ public class Jwt {
       return this;
     }
 
+    public JwtBuilder aud(String aud) {
+      this.reservedClaims.add(new Claim(JwtAttributeNames.AUD, aud));
+      return this;
+    }
+
+    public JwtBuilder iss(String iss) {
+      this.reservedClaims.add(new Claim(JwtAttributeNames.ISS, iss));
+      return this;
+    }
+
+    public JwtBuilder exp(long exp) {
+      this.reservedClaims.add(new Claim(JwtAttributeNames.EXP, exp));
+      return this;
+    }
+
+    public JwtBuilder nbf(long nbf) {
+      this.reservedClaims.add(new Claim(JwtAttributeNames.NBF, nbf));
+      return this;
+    }
+
+    public JwtBuilder iat(long iat) {
+      this.reservedClaims.add(new Claim(JwtAttributeNames.IAT, iat));
+      return this;
+    }
+
+    public JwtBuilder jti(String jti) {
+      this.reservedClaims.add(new Claim(JwtAttributeNames.JTI, jti));
+      return this;
+    }
+
     public JwtBuilder reservedClaim(Claim claim) {
       this.reservedClaims.add(claim);
       return this;
@@ -117,6 +156,11 @@ public class Jwt {
 
     public JwtBuilder claim(Claim claim) {
       this.customClaims.add(claim);
+      return this;
+    }
+
+    public JwtBuilder claims(Collection<Claim> claims) {
+      this.customClaims.addAll(claims);
       return this;
     }
 
@@ -156,5 +200,37 @@ public class Jwt {
 
   public ObjectMapper getObjectMapper() {
     return objectMapper;
+  }
+
+  public Object claim(String claim) {
+    return this.properties.get(claim);
+  }
+
+  public String claimAsString(String claim) {
+    return (String) this.claim(claim);
+  }
+
+  public Integer claimAsInteger(String claim) {
+    return (Integer) this.claim(claim);
+  }
+
+  public Double claimAsDouble(String claim) {
+    return (Double) this.claim(claim);
+  }
+
+  public BigInteger claimAsBigInteger(String claim) {
+    return (BigInteger) this.claim(claim);
+  }
+
+  public Boolean claimAsBoolean(String claim) {
+    return (Boolean) this.claim(claim);
+  }
+
+  public Float claimAsFloat(String claim) {
+    return (Float) this.claim(claim);
+  }
+
+  public Long claimAsLong(String claim) {
+    return (Long) this.claim(claim);
   }
 }
