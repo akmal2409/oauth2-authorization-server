@@ -27,5 +27,7 @@ public class InternalOAuth2ConfigurationProperties {
   private String signatureAlg = "SHA256withRSA";
   private String keyAlg = "RSA";
   private int keyLength = 2048;
+  private String issuerUrl = "http://localhost:8080";
+  private long tokenValidityMs = 15 * 60 * 1000; // 15min
 
 }
