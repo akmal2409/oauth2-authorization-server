@@ -34,7 +34,6 @@ public class FederatedAuthenticationEntryPoint implements AuthenticationEntryPoi
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) throws IOException, ServletException {
     final var idp = request.getParameter(OAuth2ParameterNames.IDP);
-
     if (StringUtils.hasText(idp)) {
       // federate the authentication to the 3rd party Idp after validation
       response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "External IDP authentication is not implemented");
