@@ -46,6 +46,7 @@ public class SignUpModel {
         null,
         false,
         List.of(),
+        List.of(),
         List.of()
     );
   }

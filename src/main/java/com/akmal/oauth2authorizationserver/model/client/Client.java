@@ -1,5 +1,6 @@
 package com.akmal.oauth2authorizationserver.model.client;
 
+import com.akmal.oauth2authorizationserver.model.RefreshToken;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CollectionTable;
@@ -11,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
@@ -70,6 +72,9 @@ public class Client implements Persistable<String> {
 
   @Column(name = "allow_wildcards_in_redirect_urls")
   private boolean allowWildcardsInRedirectUrls;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+  private List<RefreshToken> refreshTokens;
 
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(

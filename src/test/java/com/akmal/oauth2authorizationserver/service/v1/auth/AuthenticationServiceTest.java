@@ -95,7 +95,7 @@ class AuthenticationServiceTest {
 
     final var expectedUser = new User(
         expectedId, "firstName lastName", expectedHashedPassword, "firstName", "lastName", "lastName", null, null, null,
-        Instant.now(), "test@gmail.com", null, false, List.of(), List.of(defaultRole)
+        Instant.now(), "test@gmail.com", null, false, List.of(),List.of(), List.of(defaultRole)
     );
 
     when(userRepository.hasEmail(anyString())).thenReturn(false);

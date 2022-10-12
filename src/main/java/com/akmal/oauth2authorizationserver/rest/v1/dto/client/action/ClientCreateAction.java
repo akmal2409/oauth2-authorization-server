@@ -29,6 +29,7 @@ public record ClientCreateAction(
         this.requireUserConsent,
         this.allowWildcardsInRedirectUrls,
         List.of(),
+        List.of(),
         false
     );
   }

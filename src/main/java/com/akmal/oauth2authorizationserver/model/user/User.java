@@ -1,6 +1,7 @@
 package com.akmal.oauth2authorizationserver.model.user;
 
 import com.akmal.oauth2authorizationserver.crypto.jwt.Claim;
+import com.akmal.oauth2authorizationserver.model.RefreshToken;
 import com.akmal.oauth2authorizationserver.model.Role;
 import com.akmal.oauth2authorizationserver.model.Session;
 import com.akmal.oauth2authorizationserver.oauth2.config.OidcScopes;
@@ -84,6 +85,9 @@ public class User {
   @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
   @OrderBy("createdAt DESC")
   private List<Session> sessions;
+
+  @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+  private List<RefreshToken> refreshTokens;
 
   @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
   @JoinTable(

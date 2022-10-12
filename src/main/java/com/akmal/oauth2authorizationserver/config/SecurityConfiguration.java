@@ -8,6 +8,7 @@ import com.akmal.oauth2authorizationserver.internal.security.provider.SessionCoo
 import com.akmal.oauth2authorizationserver.internal.security.provider.UserCredentialsAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.AuthorizationCodeTokenAuthenticationProvider;
+import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.RefreshTokenAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.rest.controller.WellKnownController;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2AuthorizationEndpointFilter;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2TokenRequestFilter;
@@ -23,7 +24,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -44,14 +44,16 @@ public class SecurityConfiguration {
       OAuth2AuthorizationEndpointFilter oAuth2AuthorizationEndpointFilter,
       OAuth2TokenRequestFilter oAuth2TokenRequestFilter) throws Exception {
     return http
-               .csrf(
-                   csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+//               .csrf(
+//                   csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+               .csrf().disable()
                .sessionManagement(
                    sessions -> sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                .authorizeRequests(customizer -> customizer
                                                     .antMatchers(this.authProps.getLoginUrl(),
                                                         this.authProps.getLoginProcessUrl(),
                                                         "/test/**",
+                                                        "/api/v1/clients/**",
                                                         WellKnownController.BASE_URL + "/**")
                                                     .permitAll()
                                                     .anyRequest().authenticated())
@@ -81,9 +83,10 @@ public class SecurityConfiguration {
   AuthenticationManager authenticationManager(UserCredentialsAuthenticationProvider userCredentialsAuthenticationProvider,
       OAuth2WebFlowRequestAuthenticationProvider oAuth2WebFlowRequestAuthenticationProvider,
       SessionCookieAuthenticationProvider sessionCookieAuthenticationProvider,
-      AuthorizationCodeTokenAuthenticationProvider authorizationCodeTokenAuthenticationProvider) {
+      AuthorizationCodeTokenAuthenticationProvider authorizationCodeTokenAuthenticationProvider,
+      RefreshTokenAuthenticationProvider refreshTokenAuthenticationProvider) {
     return new ProviderManager(userCredentialsAuthenticationProvider, oAuth2WebFlowRequestAuthenticationProvider, sessionCookieAuthenticationProvider,
-        authorizationCodeTokenAuthenticationProvider);
+        authorizationCodeTokenAuthenticationProvider, refreshTokenAuthenticationProvider);
   }
 
 }

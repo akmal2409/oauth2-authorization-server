@@ -8,9 +8,12 @@ import com.akmal.oauth2authorizationserver.crypto.jwt.Jwt;
 import com.akmal.oauth2authorizationserver.crypto.jwt.Jwt.JwtBuilder;
 import com.akmal.oauth2authorizationserver.crypto.jwt.JwtAttributeNames;
 import com.akmal.oauth2authorizationserver.exception.token.TokenIssuanceFailedException;
+import com.akmal.oauth2authorizationserver.model.RefreshToken;
 import com.akmal.oauth2authorizationserver.model.client.GrantType;
 import com.akmal.oauth2authorizationserver.oauth2.config.OidcScopes;
+import com.akmal.oauth2authorizationserver.repository.RefreshTokenRepository;
 import com.akmal.oauth2authorizationserver.repository.UserRepository;
+import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
 import com.akmal.oauth2authorizationserver.shared.persistence.TransactionPropagator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.security.InvalidKeyException;
@@ -18,13 +21,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,16 +45,22 @@ public class TokenIssueService {
   private final ObjectMapper objectMapper;
   private final InternalOAuth2ConfigurationProperties internalOauthConfigProps;
   private final TransactionPropagator transactionPropagator;
+  private final ClientRepository clientRepository;
   private final UserRepository userRepository;
+  private final RefreshTokenRepository refreshTokenRepository;
 
   public TokenIssueService(RsaKeyService rsaKeyService, ObjectMapper objectMapper,
       InternalOAuth2ConfigurationProperties internalOauthConfigProps,
-      TransactionPropagator transactionPropagator, UserRepository userRepository) {
+      TransactionPropagator transactionPropagator, ClientRepository clientRepository,
+      UserRepository userRepository,
+      RefreshTokenRepository refreshTokenRepository) {
     this.rsaKeyService = rsaKeyService;
     this.objectMapper = objectMapper;
     this.internalOauthConfigProps = internalOauthConfigProps;
     this.transactionPropagator = transactionPropagator;
+    this.clientRepository = clientRepository;
     this.userRepository = userRepository;
+    this.refreshTokenRepository = refreshTokenRepository;
   }
 
   /**
@@ -64,7 +75,7 @@ public class TokenIssueService {
   @Transactional
   public Map<String, Object> issueTokenSet(OAuth2TokenIssueProperties properties) {
 
-    final var tokenSet = new HashMap<String, Object>();
+    final var tokenSet = new LinkedHashMap<String, Object>();
 
     final var accessTokenJwt =
         this.transactionPropagator.withinCurrent(() -> {
@@ -76,7 +87,19 @@ public class TokenIssueService {
           }
         });
     tokenSet.put(OAuth2TokenAttributeNames.ACCESS_TOKEN, accessTokenJwt.getEncodedToken());
+    tokenSet.put(OAuth2TokenAttributeNames.TOKEN_TYPE, "Bearer");
+    tokenSet.put(OAuth2TokenAttributeNames.EXPIRES_IN,
+        accessTokenJwt.getExpiresAt().toEpochMilli());
+    tokenSet.put(OAuth2TokenAttributeNames.SCOPE, String.join(" ", properties.scopes()));
+
     Set<String> scopeSet = new HashSet<>(properties.scopes());
+
+    if (scopeSet.contains(OidcScopes.OFFLINE_ACCESS)) {
+      final var refreshToken = this.transactionPropagator.withinCurrent(
+          () -> this.issueRefreshToken(
+              properties.sub(), properties.clientId(), properties.scopes()));
+      tokenSet.put(OAuth2TokenAttributeNames.REFRESH_TOKEN, refreshToken);
+    }
 
     // if the client credentials grant is used, then we should not include any user related scopes, neither an ID token
     // client_credentials grant is aimed only at machine-to-machine communication.
@@ -93,11 +116,25 @@ public class TokenIssueService {
       tokenSet.put(OAuth2TokenAttributeNames.ID_TOKEN, idTokenJwt.getEncodedToken());
     }
 
-    if (scopeSet.contains(OidcScopes.OFFLINE_ACCESS)) {
-      // TODO: implement refresh tokens.
-    }
-
     return tokenSet;
+  }
+
+  private String issueRefreshToken(String sub, String clientId, List<String> scopes) {
+    final var user = this.userRepository.findById(sub)
+                         .orElseThrow(
+                             () -> new TokenIssuanceFailedException("Subject was not found"));
+
+    final var client = this.clientRepository.findById(clientId)
+                           .orElseThrow(
+                               () -> new TokenIssuanceFailedException("Client was not found"));
+    final byte[] randomBytes = new byte[12];
+    ThreadLocalRandom.current().nextBytes(randomBytes);
+    final var token = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+    final var refreshToken = new RefreshToken(token, user, client,
+        Instant.now().plus(Duration.ofDays(1)), Instant.now(), scopes);
+
+    this.refreshTokenRepository.save(refreshToken);
+    return token;
   }
 
   /**
@@ -202,4 +239,5 @@ public class TokenIssueService {
                         .toEpochMilli())
                .jti(UUID.randomUUID().toString());
   }
+
 }

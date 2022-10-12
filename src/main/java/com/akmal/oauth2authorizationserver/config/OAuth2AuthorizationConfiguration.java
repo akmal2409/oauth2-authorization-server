@@ -4,10 +4,12 @@ import com.akmal.oauth2authorizationserver.crypto.RsaKeyService;
 import com.akmal.oauth2authorizationserver.oauth2.authorization.strategy.GrantBasedAuthorizationStrategyFactory;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.AuthorizationCodeTokenAuthenticationProvider;
+import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.RefreshTokenAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.token.issuance.TokenIssueService;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2AuthorizationEndpointFilter;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2TokenRequestFilter;
 import com.akmal.oauth2authorizationserver.repository.OAuth2AuthCodePendingRequestRepository;
+import com.akmal.oauth2authorizationserver.repository.RefreshTokenRepository;
 import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
 import com.akmal.oauth2authorizationserver.repository.UserGrantedClientRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
@@ -46,6 +48,11 @@ public class OAuth2AuthorizationConfiguration {
       OAuth2AuthCodePendingRequestRepository repository
   ) {
     return new AuthorizationCodeTokenAuthenticationProvider(repository);
+  }
+
+  @Bean
+  RefreshTokenAuthenticationProvider refreshTokenAuthenticationProvider(RefreshTokenRepository refreshTokenRepository) {
+    return new RefreshTokenAuthenticationProvider(refreshTokenRepository);
   }
 
   @Bean

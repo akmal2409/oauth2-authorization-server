@@ -9,6 +9,7 @@ import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
+import java.time.Instant;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +28,8 @@ public class Jwt {
   private String encodedHeader;
   private String encodedPayload;
   private String encodedSignature;
+
+  private Instant expiresAt;
   private final ObjectMapper objectMapper;
 
   private Map<String, Object> properties;
@@ -45,6 +48,7 @@ public class Jwt {
                             .concat(".")
                             .concat(encodedSignature);
     this.properties = new HashMap<>();
+    this.expiresAt = builder.expiresAt;
 
     for (Claim claim: this.claims) {
       this.properties.put(claim.name(), claim.value());
@@ -103,6 +107,7 @@ public class Jwt {
     private final List<Claim> reservedClaims = new LinkedList<>();
     private final List<Claim> customClaims = new LinkedList<>();
     private final ObjectMapper objectMapper;
+    private Instant expiresAt;
 
     public JwtBuilder(ObjectMapper objectMapper) {
       this.objectMapper = objectMapper;
@@ -131,6 +136,7 @@ public class Jwt {
 
     public JwtBuilder exp(long exp) {
       this.reservedClaims.add(new Claim(JwtAttributeNames.EXP, exp));
+      this.expiresAt = Instant.ofEpochMilli(exp);
       return this;
     }
 
@@ -184,6 +190,10 @@ public class Jwt {
 
   public String getEncodedToken() {
     return encodedToken;
+  }
+
+  public Instant getExpiresAt() {
+    return expiresAt;
   }
 
   public String getEncodedHeader() {
