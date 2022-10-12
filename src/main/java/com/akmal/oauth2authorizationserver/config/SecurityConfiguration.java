@@ -7,7 +7,10 @@ import com.akmal.oauth2authorizationserver.internal.security.filter.RestAuthenti
 import com.akmal.oauth2authorizationserver.internal.security.provider.SessionCookieAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.internal.security.provider.UserCredentialsAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
+import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.AuthorizationCodeTokenAuthenticationProvider;
+import com.akmal.oauth2authorizationserver.oauth2.rest.controller.WellKnownController;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2AuthorizationEndpointFilter;
+import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2TokenRequestFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +32,7 @@ public class SecurityConfiguration {
 
   private final AuthenticationProperties authProps;
   private static final String[] WHITELISTED_RESOURCES = new String[]{"/resources/**", "/static/**",
-      "/styles/**", "/assets/**", "/css/**", "/js/**", "/img/**", "/icon/**"};
+      "/styles/**", "/assets/**", "/css/**", "/js/**", "/img/**", "/icon/**", "/oauth2/token", "/error"};
 
 
   @Bean
@@ -38,7 +41,8 @@ public class SecurityConfiguration {
       @Qualifier("federatedAuthenticationEntryPoint") AuthenticationEntryPoint federatedAuthenticationEntryPoint,
       RestAuthenticationEntryPoint restAuthenticationEntryPoint,
       AuthenticationManager authenticationManager,
-      OAuth2AuthorizationEndpointFilter oAuth2AuthorizationEndpointFilter) throws Exception {
+      OAuth2AuthorizationEndpointFilter oAuth2AuthorizationEndpointFilter,
+      OAuth2TokenRequestFilter oAuth2TokenRequestFilter) throws Exception {
     return http
                .csrf(
                    csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
@@ -46,13 +50,16 @@ public class SecurityConfiguration {
                    sessions -> sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                .authorizeRequests(customizer -> customizer
                                                     .antMatchers(this.authProps.getLoginUrl(),
-                                                        this.authProps.getLoginProcessUrl())
+                                                        this.authProps.getLoginProcessUrl(),
+                                                        "/test/**",
+                                                        WellKnownController.BASE_URL + "/**")
                                                     .permitAll()
                                                     .anyRequest().authenticated())
                .addFilter(authFilter)
                .addFilterBefore(new CookieIntrospectionFilter(authenticationManager,
                        new WebAuthenticationDetailsSource()),
                    BasicAuthenticationFilter.class)
+               .addFilterBefore(oAuth2TokenRequestFilter, BasicAuthenticationFilter.class)
                .addFilterAfter(oAuth2AuthorizationEndpointFilter, CookieIntrospectionFilter.class)
                .exceptionHandling(customizer -> customizer
                                                     .defaultAuthenticationEntryPointFor(
@@ -71,11 +78,12 @@ public class SecurityConfiguration {
   }
 
   @Bean
-  AuthenticationManager authenticationManager(HttpSecurity http,
-      UserCredentialsAuthenticationProvider userCredentialsAuthenticationProvider,
+  AuthenticationManager authenticationManager(UserCredentialsAuthenticationProvider userCredentialsAuthenticationProvider,
       OAuth2WebFlowRequestAuthenticationProvider oAuth2WebFlowRequestAuthenticationProvider,
-      SessionCookieAuthenticationProvider sessionCookieAuthenticationProvider) {
-    return new ProviderManager(userCredentialsAuthenticationProvider, oAuth2WebFlowRequestAuthenticationProvider, sessionCookieAuthenticationProvider);
+      SessionCookieAuthenticationProvider sessionCookieAuthenticationProvider,
+      AuthorizationCodeTokenAuthenticationProvider authorizationCodeTokenAuthenticationProvider) {
+    return new ProviderManager(userCredentialsAuthenticationProvider, oAuth2WebFlowRequestAuthenticationProvider, sessionCookieAuthenticationProvider,
+        authorizationCodeTokenAuthenticationProvider);
   }
 
 }
