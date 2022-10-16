@@ -2,7 +2,9 @@ package com.akmal.oauth2authorizationserver.model.client;
 
 import com.akmal.oauth2authorizationserver.model.RefreshToken;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -83,11 +85,10 @@ public class Client implements Persistable<String> {
       joinColumns = @JoinColumn(name = "client_id", referencedColumnName = "client_id"),
       inverseJoinColumns = @JoinColumn(name = "scope_id", referencedColumnName = "id")
   )
-  private List<Scope> allowedScopes = new ArrayList<>();
+  private Set<Scope> allowedScopes = new HashSet<>();
 
   @Transient
   private boolean newEntity;
-
 
   public void addGrant(Grant grant) {
     this.grants.add(grant);

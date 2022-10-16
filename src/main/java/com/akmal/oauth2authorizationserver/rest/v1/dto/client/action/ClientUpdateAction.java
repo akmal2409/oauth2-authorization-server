@@ -4,6 +4,7 @@ import com.akmal.oauth2authorizationserver.model.client.Client;
 import com.akmal.oauth2authorizationserver.model.client.Grant;
 import com.akmal.oauth2authorizationserver.model.client.GrantType;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -29,7 +30,7 @@ public record ClientUpdateAction(
         this.requireUserConsent,
         this.allowWildcardsInRedirectUrls,
         List.of(),
-        List.of(),
+        Set.of(),
         false
     );
   }

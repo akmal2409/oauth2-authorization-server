@@ -53,7 +53,7 @@ public class SecurityConfiguration {
                                                     .antMatchers(this.authProps.getLoginUrl(),
                                                         this.authProps.getLoginProcessUrl(),
                                                         "/test/**",
-                                                        "/api/v1/clients/**",
+                                                        "/api/v1/**",
                                                         WellKnownController.BASE_URL + "/**")
                                                     .permitAll()
                                                     .anyRequest().authenticated())
@@ -76,7 +76,7 @@ public class SecurityConfiguration {
 
   @Bean
   WebSecurityCustomizer webSecurityCustomizer() {
-    return (web) -> web.ignoring().antMatchers(WHITELISTED_RESOURCES);
+    return web -> web.ignoring().antMatchers(WHITELISTED_RESOURCES);
   }
 
   @Bean

@@ -1,12 +1,9 @@
 package com.akmal.oauth2authorizationserver.service.v1.auth;
 
 import com.akmal.oauth2authorizationserver.exception.oauth2.OAuth2AuthorizationException;
-import com.akmal.oauth2authorizationserver.model.client.Client;
-import com.akmal.oauth2authorizationserver.model.client.Grant;
 import com.akmal.oauth2authorizationserver.model.client.Scope;
 import com.akmal.oauth2authorizationserver.model.user.UserGrantedClient;
 import com.akmal.oauth2authorizationserver.oauth2.OAuth2Error;
-import com.akmal.oauth2authorizationserver.oauth2.authprovider.Tuple;
 import com.akmal.oauth2authorizationserver.oauth2.config.OAuth2ErrorTypes;
 import com.akmal.oauth2authorizationserver.oauth2.web.model.Consent;
 import com.akmal.oauth2authorizationserver.oauth2.web.model.ConsentRequest;
@@ -14,6 +11,7 @@ import com.akmal.oauth2authorizationserver.repository.ScopeRepository;
 import com.akmal.oauth2authorizationserver.repository.UserGrantedClientRepository;
 import com.akmal.oauth2authorizationserver.repository.client.ClientRepository;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -66,7 +64,7 @@ public class ConsentService {
    * @param requestedScopes scopes requested by the requesting application
    * @return
    */
-  private boolean areClientRequestedScopesValid(List<Scope> allowedScopes, List<Scope> requestedScopes) {
+  private boolean areClientRequestedScopesValid(Collection<Scope> allowedScopes, Collection<Scope> requestedScopes) {
     final var allowedScopeSet = new HashSet<>(allowedScopes.stream().map(Scope::getId).toList());
 
     for (Scope requestedScope: requestedScopes) {
