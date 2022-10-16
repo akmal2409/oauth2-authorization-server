@@ -20,7 +20,6 @@ public class InternalOAuth2ConfigurationProperties {
   private Path configDir  = Paths.get(System.getProperty("user.home"), ".authorization_server");
   private String keysDirectoryName = "keys";
   private String privateKeyAlias = "token.signer.private";
-  private String certificateAlias = "token.signer.certificate";
   private String keyStoreName = "keystore.p12";
   private String keyStoreType = "PKCS12";
   private String keyStorePassword = "password";
