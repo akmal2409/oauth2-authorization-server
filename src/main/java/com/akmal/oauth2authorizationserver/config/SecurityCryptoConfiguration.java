@@ -1,6 +1,7 @@
 package com.akmal.oauth2authorizationserver.config;
 
 import com.akmal.oauth2authorizationserver.idgen.Generator;
+import com.akmal.oauth2authorizationserver.idgen.RandomBytesBase64SecretGenerator;
 import com.akmal.oauth2authorizationserver.idgen.SecretGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +18,6 @@ public class SecurityCryptoConfiguration {
 
   @Bean
   Generator<String> secretGenerator() {
-    return new SecretGenerator.Builder()
-               .useNumbers(true)
-               .useSymbols(true)
-               .useLowerCaseLetters(true)
-               .useUpperCaseLetters(true)
-               .withLength(32)
-               .build();
+    return new RandomBytesBase64SecretGenerator(32);
   }
 }

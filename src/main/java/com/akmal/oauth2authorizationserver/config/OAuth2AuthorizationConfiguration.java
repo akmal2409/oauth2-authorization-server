@@ -1,9 +1,9 @@
 package com.akmal.oauth2authorizationserver.config;
 
-import com.akmal.oauth2authorizationserver.crypto.RsaKeyService;
 import com.akmal.oauth2authorizationserver.oauth2.authorization.strategy.GrantBasedAuthorizationStrategyFactory;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.AuthorizationCodeTokenAuthenticationProvider;
+import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.ClientCredentialsTokenAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.RefreshTokenAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.token.issuance.TokenIssueService;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2AuthorizationEndpointFilter;
@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * Configuration class that exposes the beans to the Spring Context, which are related
@@ -48,6 +49,13 @@ public class OAuth2AuthorizationConfiguration {
       OAuth2AuthCodePendingRequestRepository repository
   ) {
     return new AuthorizationCodeTokenAuthenticationProvider(repository);
+  }
+
+  @Bean
+  ClientCredentialsTokenAuthenticationProvider clientCredentialsTokenAuthenticationProvider(
+      ClientRepository clientRepository, PasswordEncoder passwordEncoder
+  ) {
+    return new ClientCredentialsTokenAuthenticationProvider(clientRepository, passwordEncoder);
   }
 
   @Bean

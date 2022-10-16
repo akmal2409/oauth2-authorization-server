@@ -62,10 +62,11 @@ public class OAuth2TokenRequestFilter extends OncePerRequestFilter {
       return;
     }
 
-    this.issueToken(validatedAuthentication, request, response);
+    this.issueToken(validatedAuthentication, response);
   }
 
-  private void issueToken(OAuth2TokenRequestAuthentication authentication, HttpServletRequest request, HttpServletResponse response) {
+  private void issueToken(OAuth2TokenRequestAuthentication authentication,
+      HttpServletResponse response) {
     final var tokenSet = this.tokenIssueService.issueTokenSet(new OAuth2TokenIssueProperties(
         authentication.getSub(), authentication.getClientId(), authentication.getGrantedScopes(), authentication.getGrantType()
     ));
