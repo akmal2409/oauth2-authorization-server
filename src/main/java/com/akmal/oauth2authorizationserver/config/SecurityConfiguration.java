@@ -8,6 +8,7 @@ import com.akmal.oauth2authorizationserver.internal.security.provider.SessionCoo
 import com.akmal.oauth2authorizationserver.internal.security.provider.UserCredentialsAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.OAuth2WebFlowRequestAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.AuthorizationCodeTokenAuthenticationProvider;
+import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.ClientCredentialsTokenAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.authprovider.token.RefreshTokenAuthenticationProvider;
 import com.akmal.oauth2authorizationserver.oauth2.rest.controller.WellKnownController;
 import com.akmal.oauth2authorizationserver.oauth2.web.filter.oauth2.OAuth2AuthorizationEndpointFilter;
@@ -84,9 +85,10 @@ public class SecurityConfiguration {
       OAuth2WebFlowRequestAuthenticationProvider oAuth2WebFlowRequestAuthenticationProvider,
       SessionCookieAuthenticationProvider sessionCookieAuthenticationProvider,
       AuthorizationCodeTokenAuthenticationProvider authorizationCodeTokenAuthenticationProvider,
-      RefreshTokenAuthenticationProvider refreshTokenAuthenticationProvider) {
+      RefreshTokenAuthenticationProvider refreshTokenAuthenticationProvider,
+      ClientCredentialsTokenAuthenticationProvider clientCredentialsTokenAuthenticationProvider) {
     return new ProviderManager(userCredentialsAuthenticationProvider, oAuth2WebFlowRequestAuthenticationProvider, sessionCookieAuthenticationProvider,
-        authorizationCodeTokenAuthenticationProvider, refreshTokenAuthenticationProvider);
+        authorizationCodeTokenAuthenticationProvider, refreshTokenAuthenticationProvider, clientCredentialsTokenAuthenticationProvider);
   }
 
 }

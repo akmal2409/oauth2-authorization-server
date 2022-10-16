@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import org.springframework.util.StringUtils;
 
 public class Jwt {
 
@@ -120,6 +121,7 @@ public class Jwt {
 
 
     public JwtBuilder sub(String sub) {
+      if (!StringUtils.hasText(sub)) return this;
       this.reservedClaims.add(new Claim(JwtAttributeNames.SUB, sub));
       return this;
     }
