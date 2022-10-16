@@ -18,6 +18,7 @@ import lombok.Setter;
 @Setter
 @Table(name = "Scopes")
 public class Scope {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")

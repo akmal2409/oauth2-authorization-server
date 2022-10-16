@@ -4,7 +4,10 @@ import com.akmal.oauth2authorizationserver.rest.v1.dto.client.ClientDto;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.SecretGenerationResponse;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientCreateAction;
 import com.akmal.oauth2authorizationserver.rest.v1.dto.client.action.ClientUpdateAction;
+import com.akmal.oauth2authorizationserver.rest.v1.dto.scope.ScopeDto;
+import com.akmal.oauth2authorizationserver.service.v1.ScopeService;
 import com.akmal.oauth2authorizationserver.service.v1.client.ClientService;
+import java.util.Collection;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -12,6 +15,7 @@ import javax.validation.constraints.NotEmpty;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClientController {
   public static final String BASE_API_URL = "/api/v1/clients";
   private final ClientService clientService;
+  private final ScopeService scopeService;
 
   @GetMapping
   public List<ClientDto> findAllClients() {
@@ -62,4 +67,19 @@ public class ClientController {
     return this.clientService.generateSecret(clientId);
   }
 
+  @GetMapping("/{clientId}/allowed-scopes")
+  public Collection<ScopeDto> findAllowedScopes(@PathVariable String clientId) {
+    return this.scopeService.findAllByClientId(clientId);
+  }
+  @PutMapping("/{clientId}/allowed-scopes/{scopeId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void addAllowedScope(@Validated @PathVariable @NotBlank String clientId, @Validated @PathVariable int scopeId) {
+    this.clientService.allowScopeForClient(clientId, scopeId);
+  }
+
+  @DeleteMapping("/{clientId}/allowed-scopes/{scopeId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void removeAllowedScope(@Validated @PathVariable @NotBlank String clientId, @Validated @PathVariable int scopeId) {
+    this.clientService.deleteScopeForClient(clientId, scopeId);
+  }
 }
